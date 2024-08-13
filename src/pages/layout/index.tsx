@@ -22,9 +22,9 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
   return (
     <AuthCoreContextProvider
       options={{
-        projectId: '85f76251-c6d4-4a53-841d-e349db7f7efd',
-        clientKey: 'cluxPgnaYy6y2K15hMUkZPAWtRHwfRyqKF1IipBx',
-        appId: '77062858-b05e-47f4-b516-6b5079ffa27e',
+        projectId: '71013a88-20c7-4719-bcc9-70f51d080ae6',
+        clientKey: 'cqLTcP5sUciuwMoFqLCMYrhPNleJuTjrs5LDjgvL',
+        appId: '3e4b05ec-6311-437c-b93c-20122efc3af5',
         // Remove authTypes if you want to allow for all the options
         authTypes: [AuthType.email, AuthType.google, AuthType.twitter, AuthType.github],
         themeType: 'dark',
