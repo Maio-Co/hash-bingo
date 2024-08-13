@@ -1,1 +1,0 @@
-import{A as s,S as a}from"./AssumeRoleCommand-bd2d7c5d.js";import"./index-6b40c100.js";import"./lazy-json-bd073f8f.js";import"./index-d0092a53.js";import"./noAuth-3a9ec9c8.js";import"./constants-c1d53137.js";export{s as AssumeRoleCommand,a as STSClient};

@@ -1,0 +1,1 @@
+import{C as n,G as d,a as p}from"./GetIdCommand-5d2b74f0.js";import"./index-9515a35f.js";import"./lazy-json-bd073f8f.js";import"./index-d9a9a9ca.js";import"./noAuth-3a9ec9c8.js";import"./parseJsonBody-0fe03aa1.js";export{n as CognitoIdentityClient,d as GetCredentialsForIdentityCommand,p as GetIdCommand};

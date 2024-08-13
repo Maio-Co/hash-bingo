@@ -1,1 +1,0 @@
-import{r as a,aI as c}from"./index-d0092a53.js";import{u as f}from"./index-3747d9a4.js";var m=function(n,r,e){e===void 0&&(e={});var u=f(n),t=a.useRef(null),i=a.useCallback(function(){t.current&&clearInterval(t.current)},[]);return a.useEffect(function(){if(!(!c(r)||r<0))return e.immediate&&u(),t.current=setInterval(u,r),i},[r,e.immediate]),i};const v=m;export{v as B};
