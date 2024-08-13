@@ -2,7 +2,6 @@ import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Link, Outlet } from 'react-router-dom'
 import Header from './header'
-import ProgressLinear from '@/components/progress-linear'
 import ProgressCircular from '@/components/progress-circular'
 import NotFound from '@/assets/images/not-found.png'
 import Button from '@mui/material/Button'
@@ -17,16 +16,16 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
   const toastOption = {  style: { wordBreak: 'break-all' } } as any
 
   return (
-    <main className="flex flex-col pt-[56px] relative w-full min-h-screen">
-      <ProgressLinear />
-      <Header />
+    <div className="Frame max-w-screen-sm mx-auto bg-bg">
+      <main className="min-h-screen flex flex-col relative w-full">
+        <Header />
 
-      <section className="flex-1 w-full">
-        { isErrorPage ? children : <Outlet /> }
-      </section>
-
-      <Toaster position="top-center" reverseOrder={true} toastOptions={toastOption}/>
-    </main>
+        <section className="flex-1 w-full">
+          { isErrorPage ? children : <Outlet /> }
+        </section>
+        <Toaster position="top-center" reverseOrder={true} toastOptions={toastOption}/>
+      </main>
+    </div>
   )
 }
 
