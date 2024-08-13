@@ -1,5 +1,5 @@
 {
-  "name": "react-template",
+  "name": "hash-bingo",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -17,12 +17,15 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/material": "^5.16.7",
     "@mui/styled-engine-sc": "^5.12.0",
+    "@particle-network/auth-core": "^2.0.0-alpha.1",
+    "@particle-network/auth-core-modal": "^1.5.2",
+    "@particle-network/chains": "^1.5.12",
     "@react-spring/web": "^9.7.3",
     "@solana/web3.js": "^1.95.2",
     "axios": "^1.7.2",
     "big.js": "^6.2.1",
     "dayjs": "^1.11.10",
-    "ethers": "^6.7.1",
+    "ethers": "^6.13.2",
     "i18next": "^23.11.3",
     "normalize.css": "^8.0.1",
     "notistack": "^3.0.1",
@@ -35,7 +38,8 @@
     "react-qr-code": "^2.0.13",
     "react-router": "^6.15.0",
     "react-router-dom": "^6.15.0",
-    "unstated-next": "^1.1.0"
+    "unstated-next": "^1.1.0",
+    "viem": "^2.19.4"
   },
   "devDependencies": {
     "@types/big.js": "^6.2.0",

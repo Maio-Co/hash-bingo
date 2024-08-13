@@ -5,6 +5,10 @@ import Header from './header'
 import ProgressCircular from '@/components/progress-circular'
 import NotFound from '@/assets/images/not-found.png'
 import Button from '@mui/material/Button'
+// Particle imports
+import { Ethereum, BNBChain, SolanaDevnet } from '@particle-network/chains'
+import { AuthType } from '@particle-network/auth-core'
+import { AuthCoreContextProvider } from '@particle-network/auth-core-modal'
 
 interface LayoutProps {
   isErrorPage?: boolean
@@ -16,16 +20,33 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
   const toastOption = {  style: { wordBreak: 'break-all' } } as any
 
   return (
-    <div className="Frame max-w-screen-sm mx-auto bg-bg">
-      <main className="min-h-screen flex flex-col relative w-full">
-        <Header />
+    <AuthCoreContextProvider
+      options={{
+        projectId: '85f76251-c6d4-4a53-841d-e349db7f7efd',
+        clientKey: 'cluxPgnaYy6y2K15hMUkZPAWtRHwfRyqKF1IipBx',
+        appId: '77062858-b05e-47f4-b516-6b5079ffa27e',
+        // Remove authTypes if you want to allow for all the options
+        authTypes: [AuthType.email, AuthType.google, AuthType.twitter, AuthType.github],
+        themeType: 'dark',
+        wallet: {
+          visible: true,
+          customStyle: {
+            supportChains: [Ethereum, BNBChain, SolanaDevnet],
+          },
+        },
+      }}
+    >
+      <div className="Frame max-w-screen-sm mx-auto bg-bg">
+        <main className="min-h-screen flex flex-col relative w-full">
+          <Header />
 
-        <section className="flex-1 w-full">
-          { isErrorPage ? children : <Outlet /> }
-        </section>
-        <Toaster position="top-center" reverseOrder={true} toastOptions={toastOption}/>
-      </main>
-    </div>
+          <section className="flex-1 w-full">
+            { isErrorPage ? children : <Outlet /> }
+          </section>
+          <Toaster position="top-center" reverseOrder={true} toastOptions={toastOption}/>
+        </main>
+      </div>
+    </AuthCoreContextProvider>
   )
 }
 

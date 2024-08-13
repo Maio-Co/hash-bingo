@@ -1,15 +1,20 @@
 import RefreshIcon from '@/assets/icons/refresh.svg?react'
 import QuestionIcon from '@/assets/icons/question.svg?react'
 import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import TextField from '@mui/material/TextField'
-import { ChangeEvent, useMemo, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
+
+import { useConnect } from '@particle-network/auth-core-modal'
+import { Base } from '@particle-network/chains'
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
 
 const Home = () => {
+
+  const { connect, connectionStatus } = useConnect()
+  console.log('connectionStatus', connectionStatus)
+  useEffect(() => { connect({ chain: Base }) }, [])
 
   // step page
   const [step, setStep] = useState(Step.Bingo)
@@ -96,7 +101,7 @@ const Home = () => {
           <div className="px-4">
             <div className="mb-4 flex items-center gap-4">
               <Radio value={BlockType.Custom} checked={blockType === BlockType.Custom} onChange={(event: ChangeEvent<any>) => setBlockType(event.target.value)} />
-              { blockType === BlockType.Custom ? <TextField className="ml-4" id="outlined-basic" label="Enter Block Number" variant="outlined" /> : <span className="text-xl">Enter Block Number</span> }
+              { blockType === BlockType.Custom ? <TextField className="ml-4" id="outlined-basic" label="Enter Block Number" variant="outlined" value={blockInput} onChange={event => setBlockInput(event.target.value)} /> : <span className="text-xl">Enter Block Number</span> }
             </div>
             <div className="flex items-center gap-4">
               <Radio value={BlockType.Auto} checked={blockType === BlockType.Auto} onChange={(event: ChangeEvent<any>) => setBlockType(event.target.value)} />
