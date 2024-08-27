@@ -1,14 +1,14 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Link, Outlet } from 'react-router-dom'
+// import { useSolana, useAuthCore } from '@particle-network/auth-core-modal'
+import { useSolana } from '@particle-network/auth-core-modal'
 import Header from './header'
+import Login from './login'
 import ProgressCircular from '@/components/progress-circular'
 import NotFound from '@/assets/images/not-found.png'
 import Button from '@mui/material/Button'
-// Particle imports
-import { Ethereum, BNBChain, SolanaDevnet } from '@particle-network/chains'
-import { AuthType } from '@particle-network/auth-core'
-import { AuthCoreContextProvider } from '@particle-network/auth-core-modal'
+import { setAuth, APIRequest } from '@/service/api-request'
 
 interface LayoutProps {
   isErrorPage?: boolean
@@ -16,37 +16,47 @@ interface LayoutProps {
 }
 
 const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
+  const { address } = useSolana()
+
+  const getApiToken = async (address: string, signature: string) => {
+    const token = await APIRequest.post('/login', { address, signature })
+      .then(res => res.data)
+      .then(res => res?.jwt || '')
+      .catch(() => '')
+
+    if (token) setApiToken(token)
+  }
+
+  useEffect(() => {
+    getApiToken(address || '', '')
+  }, [address])
+
+
+  const [apiToken, setApiToken] = useState('')
+  useEffect(() => {
+    if (apiToken) setAuth(apiToken)
+  }, [apiToken])
+
+  const isLogin = useMemo(() => apiToken !== '', [apiToken])
 
   const toastOption = {  style: { wordBreak: 'break-all' } } as any
 
   return (
-    <AuthCoreContextProvider
-      options={{
-        projectId: '71013a88-20c7-4719-bcc9-70f51d080ae6',
-        clientKey: 'cqLTcP5sUciuwMoFqLCMYrhPNleJuTjrs5LDjgvL',
-        appId: '3e4b05ec-6311-437c-b93c-20122efc3af5',
-        // Remove authTypes if you want to allow for all the options
-        authTypes: [AuthType.email, AuthType.google, AuthType.twitter, AuthType.github],
-        themeType: 'dark',
-        wallet: {
-          visible: true,
-          customStyle: {
-            supportChains: [Ethereum, BNBChain, SolanaDevnet],
-          },
-        },
-      }}
-    >
-      <div className="Frame max-w-screen-sm mx-auto bg-bg">
-        <main className="min-h-screen flex flex-col relative w-full">
-          <Header />
+    <div className="Frame max-w-screen-sm mx-auto bg-bg">
+      <main className="min-h-screen flex flex-col relative w-full">
+        { !isLogin && <Login /> }
+        { isLogin &&
+          <>
+            <Header />
+            <section className="flex-1 w-full">
+              { isErrorPage ? children : <Outlet /> }
+            </section>
+          </>
+        }
 
-          <section className="flex-1 w-full">
-            { isErrorPage ? children : <Outlet /> }
-          </section>
-          <Toaster position="top-center" reverseOrder={true} toastOptions={toastOption}/>
-        </main>
-      </div>
-    </AuthCoreContextProvider>
+        <Toaster position="top-center" reverseOrder={true} toastOptions={toastOption}/>
+      </main>
+    </div>
   )
 }
 

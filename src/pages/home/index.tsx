@@ -3,18 +3,34 @@ import QuestionIcon from '@/assets/icons/question.svg?react'
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
-
-import { useConnect } from '@particle-network/auth-core-modal'
-import { Base } from '@particle-network/chains'
+import { useSolana, useAuthCore } from '@particle-network/auth-core-modal'
+import bs58 from 'bs58'
+import { APIRequest } from '@/service/api-request'
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
 
-const Home = () => {
+const createDefaultBingo = () => Array.from(Array(16)).map(() => '')
 
-  const { connect, connectionStatus } = useConnect()
-  console.log('connectionStatus', connectionStatus)
-  useEffect(() => { connect({ chain: Base }) }, [])
+const Home = () => {
+  const { openWallet } = useAuthCore()
+
+  const { address, signMessage } = useSolana()
+  const { userInfo } = useAuthCore()
+  console.log('address', address)
+  console.log('userInfo', userInfo)
+
+  useEffect(() => {
+    if (address == '1') return
+    const encodedMessage = new TextEncoder().encode('Hello, Solana')
+    signMessage(encodedMessage)
+      .then(signatureUnit8Array => {
+        const signature = bs58.encode(signatureUnit8Array)
+        console.log('Signature', signature)
+      })
+      .catch(err => console.log('err', err))
+
+  }, [address])
 
   // step page
   const [step, setStep] = useState(Step.Bingo)
@@ -22,12 +38,18 @@ const Home = () => {
   const toPlaced = () => setStep(Step.Placed)
   const toBingo = () => setStep(Step.Bingo)
 
-  const [bingoList, setBingoList] = useState(Array.from(Array(16)).map(() => ''))
+  // bingo number
+  const [bingoList, setBingoList] = useState(createDefaultBingo())
 
   const isGenerate = useMemo(() => bingoList.every(item => item !== ''),[bingoList])
 
-  const generation = () => {
-    setBingoList(generateRandomArray(16))
+  const generation = async () => {
+    const bingoNumber = await APIRequest.post('/sendtx')
+      .then(res => res.data)
+      .then(res => res.board?.board?.[0] || createDefaultBingo())
+      .catch(() => createDefaultBingo())
+
+    setBingoList(bingoNumber)
   }
 
   // block form
@@ -152,24 +174,12 @@ const Home = () => {
           <div className="mt-8 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary" onClick={toBingo}>Check Bets</div>
         </div>
       }
+
+      <button onClick={() => openWallet()} className="p-2 px-4 bg-secondary rounded-2xl">
+        錢包
+      </button>
     </div>
   )
 }
 
 export default Home
-
-
-function generateRandomArray(length) {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
-  const result = [] as string[]
-
-  while (result.length < length) {
-    const randomIndex = Math.floor(Math.random() * chars.length)
-    const randomChar = chars[randomIndex]
-    if (!result.includes(randomChar)) {
-      result.push(randomChar)
-    }
-  }
-
-  return result
-}

@@ -19,11 +19,16 @@
     "@mui/styled-engine-sc": "^5.12.0",
     "@particle-network/auth-core": "^2.0.0-alpha.1",
     "@particle-network/auth-core-modal": "^1.5.2",
+    "@particle-network/authkit": "^2.0.2",
     "@particle-network/chains": "^1.5.12",
+    "@particle-network/thresh-sig": "^0.7.8",
+    "@particle-network/wallet": "^2.0.0-alpha.2",
     "@react-spring/web": "^9.7.3",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
     "@solana/web3.js": "^1.95.2",
     "axios": "^1.7.2",
     "big.js": "^6.2.1",
+    "bs58": "^6.0.0",
     "dayjs": "^1.11.10",
     "ethers": "^6.13.2",
     "i18next": "^23.11.3",
@@ -39,7 +44,7 @@
     "react-router": "^6.15.0",
     "react-router-dom": "^6.15.0",
     "unstated-next": "^1.1.0",
-    "viem": "^2.19.4"
+    "viem": "2"
   },
   "devDependencies": {
     "@types/big.js": "^6.2.0",
