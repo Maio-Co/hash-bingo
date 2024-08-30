@@ -1,11 +1,14 @@
-import RefreshIcon from '@/assets/icons/refresh.svg?react'
-import QuestionIcon from '@/assets/icons/question.svg?react'
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { useSolana, useAuthCore } from '@particle-network/auth-core-modal'
-import bs58 from 'bs58'
 import { APIRequest } from '@/service/api-request'
+import RefreshIcon from '@/assets/icons/refresh.svg?react'
+import QuestionIcon from '@/assets/icons/question.svg?react'
+import bs58 from 'bs58'
+import { Keypair, Connection, sendAndConfirmRawTransaction ,Transaction} from '@solana/web3.js'
+import { createMint, getOrCreateAssociatedTokenAccount, mintTo, createTransferInstruction, createAccount, getAccount } from '@solana/spl-token'
+
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
@@ -20,17 +23,17 @@ const Home = () => {
   console.log('address', address)
   console.log('userInfo', userInfo)
 
-  useEffect(() => {
-    if (address == '1') return
-    const encodedMessage = new TextEncoder().encode('Hello, Solana')
-    signMessage(encodedMessage)
-      .then(signatureUnit8Array => {
-        const signature = bs58.encode(signatureUnit8Array)
-        console.log('Signature', signature)
-      })
-      .catch(err => console.log('err', err))
+  // useEffect(() => {
+  //   if (address === '') return
+  //   const encodedMessage = new TextEncoder().encode('Hello, Solana')
+  //   signMessage(encodedMessage)
+  //     .then(signatureUnit8Array => {
+  //       const signature = bs58.encode(signatureUnit8Array)
+  //       console.log('Signature', signature)
+  //     })
+  //     .catch(err => console.log('err', err))
 
-  }, [address])
+  // }, [address])
 
   // step page
   const [step, setStep] = useState(Step.Bingo)
@@ -44,9 +47,9 @@ const Home = () => {
   const isGenerate = useMemo(() => bingoList.every(item => item !== ''),[bingoList])
 
   const generation = async () => {
-    const bingoNumber = await APIRequest.post('/sendtx')
+    const bingoNumber = await APIRequest.get('/getboard')
       .then(res => res.data)
-      .then(res => res.board?.board?.[0] || createDefaultBingo())
+      .then(res => res.board || createDefaultBingo())
       .catch(() => createDefaultBingo())
 
     setBingoList(bingoNumber)
@@ -55,6 +58,18 @@ const Home = () => {
   // block form
   const [blockType, setBlockType] = useState(BlockType.Auto)
   const [blockInput, setBlockInput] = useState('')
+
+  // place bet
+  const placeBet = async () => {
+    const transaction = new Transaction()
+
+    // 1. create transaction
+    // 2. sign transaction
+    // 3. sendtx api
+
+
+    toPlaced()
+  }
 
   return (
     <div className="px-4 py-4 h-full">
@@ -106,6 +121,7 @@ const Home = () => {
 
           <div className="flex justify-center">
             <div className="py-3 px-6 min-w-28 text-white text-center font-semibold rounded-full bg-secondary" onClick={isGenerate ? toBlock : generation}>
+              {/* <div className="py-3 px-6 min-w-28 text-white text-center font-semibold rounded-full bg-secondary" onClick={toBlock}> */}
               { isGenerate ? 'Next' : 'Generation' }
             </div>
           </div>
@@ -158,7 +174,7 @@ const Home = () => {
               <span>元</span>
             </div>
 
-            <div className="mt-10 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary" onClick={toPlaced}>
+            <div className="mt-10 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary" onClick={placeBet}>
               Place Bet
             </div>
           </div>

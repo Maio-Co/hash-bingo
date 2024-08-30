@@ -2,7 +2,7 @@ import axios from 'axios'
 // import { toCamel } from '@/utils'
 
 // const BASE_URL = isDevelopmentMode() ? 'https://domain/api' : '/api'
-const BASE_URL = 'https://em8w7jrccd.execute-api.ap-northeast-1.amazonaws.com/dev'
+const BASE_URL = '/api'
 
 export const APIRequest = axios.create({ baseURL: BASE_URL, withCredentials: true })
 
