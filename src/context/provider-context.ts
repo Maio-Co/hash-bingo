@@ -7,7 +7,6 @@ const useProvider = () => {
   return { provider }
 }
 
-
 const ProviderContainer = createContainer(useProvider)
 
 export default ProviderContainer

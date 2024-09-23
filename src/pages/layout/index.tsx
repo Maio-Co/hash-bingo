@@ -1,14 +1,12 @@
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Link, Outlet } from 'react-router-dom'
-// import { useSolana, useAuthCore } from '@particle-network/auth-core-modal'
-import { useSolana } from '@particle-network/auth-core-modal'
 import Header from './header'
 import Login from './login'
 import ProgressCircular from '@/components/progress-circular'
 import NotFound from '@/assets/images/not-found.png'
 import Button from '@mui/material/Button'
-import { setAuth, APIRequest } from '@/service/api-request'
+import LoginContainer from '@/context/login-context'
 
 interface LayoutProps {
   isErrorPage?: boolean
@@ -16,28 +14,9 @@ interface LayoutProps {
 }
 
 const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
-  const { address } = useSolana()
+  const { isLogin } = LoginContainer.useContainer()
+  console.log('isLogin', isLogin)
 
-  const getApiToken = async (address: string, signature: string) => {
-    const token = await APIRequest.post('/login', { address, signature })
-      .then(res => res.data)
-      .then(res => res?.jwt || '')
-      .catch(() => '')
-
-    if (token) setApiToken(token)
-  }
-
-  useEffect(() => {
-    getApiToken(address || '', '')
-  }, [address])
-
-
-  const [apiToken, setApiToken] = useState('')
-  useEffect(() => {
-    if (apiToken) setAuth(apiToken)
-  }, [apiToken])
-
-  const isLogin = useMemo(() => apiToken !== '', [apiToken])
 
   const toastOption = {  style: { wordBreak: 'break-all' } } as any
 

@@ -1,14 +1,18 @@
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
-import { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useMemo, useState } from 'react'
 import { useSolana, useAuthCore } from '@particle-network/auth-core-modal'
 import { APIRequest } from '@/service/api-request'
 import RefreshIcon from '@/assets/icons/refresh.svg?react'
 import QuestionIcon from '@/assets/icons/question.svg?react'
+import { PublicKey, Connection, Transaction} from '@solana/web3.js'
+import { Program, AnchorProvider, BN } from '@coral-xyz/anchor'
+import idl from '@/global/bingo_game.json'
+import LoginContainer from '@/context/login-context'
 import bs58 from 'bs58'
-import { Keypair, Connection, sendAndConfirmRawTransaction ,Transaction} from '@solana/web3.js'
-import { createMint, getOrCreateAssociatedTokenAccount, mintTo, createTransferInstruction, createAccount, getAccount } from '@solana/spl-token'
 
+const network = 'https://api.devnet.solana.com'
+const connection = new Connection(network)
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
@@ -18,28 +22,16 @@ const createDefaultBingo = () => Array.from(Array(16)).map(() => '')
 const Home = () => {
   const { openWallet } = useAuthCore()
 
-  const { address, signMessage } = useSolana()
-  const { userInfo } = useAuthCore()
-  console.log('address', address)
-  console.log('userInfo', userInfo)
+  const { wallet, signTransaction } = useSolana()
 
-  // useEffect(() => {
-  //   if (address === '') return
-  //   const encodedMessage = new TextEncoder().encode('Hello, Solana')
-  //   signMessage(encodedMessage)
-  //     .then(signatureUnit8Array => {
-  //       const signature = bs58.encode(signatureUnit8Array)
-  //       console.log('Signature', signature)
-  //     })
-  //     .catch(err => console.log('err', err))
-
-  // }, [address])
+  // login info
+  const { address, loginInfo } = LoginContainer.useContainer()
 
   // step page
   const [step, setStep] = useState(Step.Bingo)
   const toBlock = () => setStep(Step.Block)
-  const toPlaced = () => setStep(Step.Placed)
   const toBingo = () => setStep(Step.Bingo)
+  const toPlaced = () => setStep(Step.Placed)
 
   // bingo number
   const [bingoList, setBingoList] = useState(createDefaultBingo())
@@ -60,15 +52,46 @@ const Home = () => {
   const [blockInput, setBlockInput] = useState('')
 
   // place bet
-  const placeBet = async () => {
-    const transaction = new Transaction()
+  const placeBet = async (address) => {
+    if (!address) return
 
-    // 1. create transaction
-    // 2. sign transaction
-    // 3. sendtx api
+    // program
+    const provider = new AnchorProvider(connection as any, wallet, { preflightCommitment: 'processed' })
+    const program = new Program(idl as any, provider)
+    console.log(1, loginInfo, address)
+
+    const transfer_in_accounts = {
+      tokenAccountOwnerPda: new PublicKey(loginInfo.tokenAccountOwnerPda),
+      pdaSplTokenAccount: new PublicKey(loginInfo.pdaSplTokenAccount),
+      senderTokenAccount: new PublicKey(loginInfo.senderTokenAccount),
+      splToken: new PublicKey(loginInfo.splToken),
+      signer: new PublicKey(address),
+      officialPayer: new PublicKey(loginInfo.officialPayer),
+    }
+    console.log(2)
+
+    const transferAmount = new BN(100)
+
+    const transfer_in_instruction = await program.methods
+      .transferIn(transferAmount)
+      .accountsPartial(transfer_in_accounts)
+      .instruction()
+
+    const transfer_in_transaction = new Transaction()
+    transfer_in_transaction.add(transfer_in_instruction)
+    transfer_in_transaction.feePayer = new PublicKey(loginInfo.officialPayer)
+    const recentBlockhash = (await connection.getLatestBlockhash()).blockhash
+    transfer_in_transaction.recentBlockhash = recentBlockhash
+
+    const signedTransaction = await signTransaction(transfer_in_transaction)
+
+    const body_transaction = bs58.encode(signedTransaction.serialize({ requireAllSignatures: false }))
+    console.log(body_transaction)
+
+    await APIRequest.post('/deposit', { transaction: body_transaction, amount: 100 })
 
 
-    toPlaced()
+    // toPlaced()
   }
 
   return (
@@ -80,7 +103,7 @@ const Home = () => {
           <div className="mb-8 flex h-12">
             <span className="text-4xl text-primary font-bold">Bingo Card</span>
             { isGenerate &&
-              <div className="ml-auto flex w-11 h-11 bg-primary-dark rounded-2xl" onClick={generation}>
+              <div className="ml-auto flex w-11 h-11 bg-primary-dark rounded-2xl cursor-pointer" onClick={generation}>
                 <RefreshIcon className="m-auto" />
               </div>
             }
@@ -120,8 +143,7 @@ const Home = () => {
           </div>
 
           <div className="flex justify-center">
-            <div className="py-3 px-6 min-w-28 text-white text-center font-semibold rounded-full bg-secondary" onClick={isGenerate ? toBlock : generation}>
-              {/* <div className="py-3 px-6 min-w-28 text-white text-center font-semibold rounded-full bg-secondary" onClick={toBlock}> */}
+            <div className="py-3 px-6 min-w-28 text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={isGenerate ? toBlock : generation}>
               { isGenerate ? 'Next' : 'Generation' }
             </div>
           </div>
@@ -174,7 +196,7 @@ const Home = () => {
               <span>元</span>
             </div>
 
-            <div className="mt-10 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary" onClick={placeBet}>
+            <div className="mt-10 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={() => placeBet(address)}>
               Place Bet
             </div>
           </div>
@@ -187,7 +209,7 @@ const Home = () => {
         step === Step.Placed &&
         <div>
           <div className="mt-10 text-center text-primary text-3xl font-bold">Bet Placed!</div>
-          <div className="mt-8 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary" onClick={toBingo}>Check Bets</div>
+          <div className="mt-8 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={toBingo}>Check Bets</div>
         </div>
       }
 
