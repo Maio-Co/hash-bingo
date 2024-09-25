@@ -1,12 +1,15 @@
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Header from './header'
 import Login from './login'
 import ProgressCircular from '@/components/progress-circular'
-import NotFound from '@/assets/images/not-found.png'
+// import NotFound from '@/assets/images/not-found.png'
 import Button from '@mui/material/Button'
 import LoginContainer from '@/context/login-context'
+import Drawer from '@mui/material/Drawer'
+import { useAuthCore } from '@particle-network/auth-core-modal'
+
 
 interface LayoutProps {
   isErrorPage?: boolean
@@ -15,10 +18,13 @@ interface LayoutProps {
 
 const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
   const { isLogin } = LoginContainer.useContainer()
-  console.log('isLogin', isLogin)
-
+  const { userInfo } = useAuthCore()
+  const navigate = useNavigate()
 
   const toastOption = {  style: { wordBreak: 'break-all' } } as any
+
+  const [isOpenDrawer, setIsOpenDrawer] = useState(false)
+  const openDrawer = () => setIsOpenDrawer(true)
 
   return (
     <div className="Frame max-w-screen-sm mx-auto bg-bg">
@@ -26,7 +32,7 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
         { !isLogin && <Login /> }
         { isLogin &&
           <>
-            <Header />
+            <Header openDrawer={openDrawer} />
             <section className="flex-1 w-full">
               { isErrorPage ? children : <Outlet /> }
             </section>
@@ -35,6 +41,18 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
 
         <Toaster position="top-center" reverseOrder={true} toastOptions={toastOption}/>
       </main>
+
+      <Drawer open={isOpenDrawer} onClose={() => setIsOpenDrawer(false)}>
+        <div className="w-[80vw] h-full p-4 flex flex-col bg-bg">
+          <div className="mb-6 py-2 border-b-2 border-bg-dark">
+            <div className="mb-2 text-primary text-2xl font-bold">Email</div>
+            <div>{ userInfo?.google_email || '-' }</div>
+          </div>
+
+          <div className="px-3 py-4 text-white font-bold text-xl bg-bg-dark rounded-lg cursor-pointer" onClick={() => navigate('/game-token')}>Game Token</div>
+
+        </div>
+      </Drawer>
     </div>
   )
 }
@@ -57,7 +75,7 @@ Layout.ErrorBoundary = () => {
     <Layout isErrorPage>
       <div className="flex h-[calc(100vh-56px)]">
         <section className="m-auto p-8 w-full max-w-screen-sm rounded-2xl flex justify-center items-center gap-8 text-white bg-gray-bg shadow">
-          <img src={NotFound} className="w-1/2" />
+          {/* <img src={NotFound} className="w-1/2" /> */}
           <div className="w-1/2">
             <h1 className="mb-2 text-5xl font-black">Oops!</h1>
             <h2 className="mb-4 text-4xl font-black">Get Some Error</h2>
@@ -76,7 +94,7 @@ Layout.NotFound = () => {
   return (
     <div className="flex h-[calc(100vh-56px)]">
       <section className="m-auto p-8 w-full max-w-screen-sm rounded-2xl flex justify-center items-center gap-8 text-white bg-gray-bg shadow">
-        <img src={NotFound} className="w-1/2" />
+        {/* <img src={NotFound} className="w-1/2" /> */}
         <div className="w-1/2">
           <h1 className="mb-2 text-5xl font-black">404</h1>
           <h2 className="mb-4 text-4xl font-black">Page Not Found</h2>

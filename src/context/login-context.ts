@@ -41,6 +41,10 @@ const useLogin = () => {
   }, [loginInfo.jwt])
 
   const isLogin = useMemo(() => loginInfo.jwt !== '', [loginInfo.jwt])
+  console.log('uuid', uuid)
+  console.log('token', token)
+  console.log('address', address)
+  console.log('isLogin', isLogin)
 
   return { uuid, token, address, userInfo, isLogin, loginInfo }
 }
