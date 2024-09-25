@@ -31,7 +31,7 @@ const Home = () => {
   const [step, setStep] = useState(Step.Bingo)
   const toBlock = () => setStep(Step.Block)
   const toBingo = () => setStep(Step.Bingo)
-  const toPlaced = () => setStep(Step.Placed)
+  // const toPlaced = () => setStep(Step.Placed)
 
   // bingo number
   const [bingoList, setBingoList] = useState(createDefaultBingo())
