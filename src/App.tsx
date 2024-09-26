@@ -7,8 +7,8 @@ import { theme } from './styles/theme'
 import { AuthCoreContextProvider } from '@particle-network/auth-core-modal'
 import NotFound from '@/assets/images/not-found.png'
 import { AuthType } from '@particle-network/auth-core'
+import { solana, solanaDevnet } from '@particle-network/authkit/chains'
 // import { solana, solanaDevnet } from '@particle-network/authkit/chains'
-import { solanaDevnet } from '@particle-network/authkit/chains'
 
 import('buffer').then(({ Buffer }) => {
   window.Buffer = Buffer
@@ -28,7 +28,7 @@ const App = () => {
         themeType: 'light',
         customStyle: {
           displayTokenAddresses: ['HZeB8bQANoKrUH39E3VqrCMyu2gfH7NanEC16LCfqhUG'],
-          supportChains: [solanaDevnet],
+          supportChains: [solana, solanaDevnet],
           supportAddToken: true,
           light: {
             colorAccent: '#E5935A',
