@@ -5,6 +5,7 @@ import Layout from '@/pages/layout'
 
 const routes = [
   { key: 'home', path: '/', index: true, component: lazy(() => import('@/pages/home')) },
+  { key: 'game-token', path: '/game-token', index: true, component: lazy(() => import('@/pages/game-token')) },
   { key: 'not-found', path: '*', index: false, component: Layout.NotFound },
 ]
 

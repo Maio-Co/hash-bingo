@@ -26,6 +26,11 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false)
   const openDrawer = () => setIsOpenDrawer(true)
 
+  const toNavigate = (path: string) => {
+    setIsOpenDrawer(false)
+    navigate(path)
+  }
+
   return (
     <div className="Frame max-w-screen-sm mx-auto bg-bg">
       <main className="min-h-screen flex flex-col relative w-full">
@@ -49,7 +54,7 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
             <div>{ userInfo?.google_email || '-' }</div>
           </div>
 
-          <div className="px-3 py-4 text-white font-bold text-xl bg-bg-dark rounded-lg cursor-pointer" onClick={() => navigate('/game-token')}>Game Token</div>
+          <div className="px-3 py-4 text-white font-bold text-xl bg-bg-dark rounded-lg cursor-pointer" onClick={() => toNavigate('/game-token')}>Game Token</div>
 
         </div>
       </Drawer>
