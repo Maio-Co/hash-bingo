@@ -2,6 +2,7 @@ import { useAuthCore, useSolana } from '@particle-network/auth-core-modal'
 import { setAuth, APIRequest } from '@/service/api-request'
 import { useEffect, useMemo, useState } from 'react'
 import { createContainer } from 'unstated-next'
+import LoadingContainer from './loading-context'
 
 interface LoginInfo {
   jwt: string
@@ -13,6 +14,7 @@ interface LoginInfo {
 }
 
 const useLogin = () => {
+  const { load, unload } = LoadingContainer.useContainer()
   const { userInfo = {} } = useAuthCore()
   const { uuid = '', token = '' } = userInfo as any
   const { address = '' } = useSolana()
@@ -28,8 +30,10 @@ const useLogin = () => {
   })
 
   const getApiToken = async (address: string, uuid: string, token: string) => {
-    APIRequest.post('/login', { uuid, token, wallet: { address, chain: 'solana' } })
+    load()
+    await APIRequest.post('/login', { uuid, token, wallet: { address, chain: 'solana' } })
       .then(res => setLoginInfo(res.data as LoginInfo))
+    unload()
   }
 
   useEffect(() => {
@@ -41,10 +45,6 @@ const useLogin = () => {
   }, [loginInfo.jwt])
 
   const isLogin = useMemo(() => loginInfo.jwt !== '', [loginInfo.jwt])
-  console.log('uuid', uuid)
-  console.log('token', token)
-  console.log('address', address)
-  console.log('isLogin', isLogin)
 
   return { uuid, token, address, userInfo, isLogin, loginInfo }
 }

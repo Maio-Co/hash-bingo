@@ -4,12 +4,13 @@ import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Header from './header'
 import Login from './login'
 import ProgressCircular from '@/components/progress-circular'
-// import NotFound from '@/assets/images/not-found.png'
 import Button from '@mui/material/Button'
 import LoginContainer from '@/context/login-context'
 import Drawer from '@mui/material/Drawer'
 import { useAuthCore } from '@particle-network/auth-core-modal'
-
+import Backdrop from '@mui/material/Backdrop'
+import CircularProgress from '@mui/material/CircularProgress'
+import LoadingContainer from '@/context/loading-context'
 
 interface LayoutProps {
   isErrorPage?: boolean
@@ -17,6 +18,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
+  const { isLoading } = LoadingContainer.useContainer()
   const { isLogin } = LoginContainer.useContainer()
   const { userInfo } = useAuthCore()
   const navigate = useNavigate()
@@ -58,6 +60,11 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
 
         </div>
       </Drawer>
+
+
+      <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 9999 })} open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   )
 }

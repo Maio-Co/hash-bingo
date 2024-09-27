@@ -1,18 +1,10 @@
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
 import { ChangeEvent, useMemo, useState } from 'react'
-import { useSolana, useAuthCore } from '@particle-network/auth-core-modal'
+// import { useAuthCore } from '@particle-network/auth-core-modal'
 import { APIRequest } from '@/service/api-request'
 import RefreshIcon from '@/assets/icons/refresh.svg?react'
 import QuestionIcon from '@/assets/icons/question.svg?react'
-import { PublicKey, Connection, Transaction} from '@solana/web3.js'
-import { Program, AnchorProvider, BN } from '@coral-xyz/anchor'
-import idl from '@/global/bingo_game.json'
-import LoginContainer from '@/context/login-context'
-import bs58 from 'bs58'
-
-const network = 'https://api.devnet.solana.com'
-const connection = new Connection(network)
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
@@ -20,18 +12,13 @@ enum BlockType { Custom = 'Custom', Auto = 'Auto' }
 const createDefaultBingo = () => Array.from(Array(16)).map(() => '')
 
 const Home = () => {
-  const { openWallet } = useAuthCore()
-
-  const { wallet, signTransaction } = useSolana()
-
-  // login info
-  const { address, loginInfo } = LoginContainer.useContainer()
+  // const { openWallet } = useAuthCore()
 
   // step page
   const [step, setStep] = useState(Step.Bingo)
   const toBlock = () => setStep(Step.Block)
   const toBingo = () => setStep(Step.Bingo)
-  // const toPlaced = () => setStep(Step.Placed)
+  const toPlaced = () => setStep(Step.Placed)
 
   // bingo number
   const [bingoList, setBingoList] = useState(createDefaultBingo())
@@ -52,46 +39,8 @@ const Home = () => {
   const [blockInput, setBlockInput] = useState('')
 
   // place bet
-  const placeBet = async (address) => {
-    if (!address) return
-
-    // program
-    const provider = new AnchorProvider(connection as any, wallet, { preflightCommitment: 'processed' })
-    const program = new Program(idl as any, provider)
-    console.log(1, loginInfo, address)
-
-    const transfer_in_accounts = {
-      tokenAccountOwnerPda: new PublicKey(loginInfo.tokenAccountOwnerPda),
-      pdaSplTokenAccount: new PublicKey(loginInfo.pdaSplTokenAccount),
-      senderTokenAccount: new PublicKey(loginInfo.senderTokenAccount),
-      splToken: new PublicKey(loginInfo.splToken),
-      signer: new PublicKey(address),
-      officialPayer: new PublicKey(loginInfo.officialPayer),
-    }
-    console.log(2)
-
-    const transferAmount = new BN(100)
-
-    const transfer_in_instruction = await program.methods
-      .transferIn(transferAmount)
-      .accountsPartial(transfer_in_accounts)
-      .instruction()
-
-    const transfer_in_transaction = new Transaction()
-    transfer_in_transaction.add(transfer_in_instruction)
-    transfer_in_transaction.feePayer = new PublicKey(loginInfo.officialPayer)
-    const recentBlockhash = (await connection.getLatestBlockhash()).blockhash
-    transfer_in_transaction.recentBlockhash = recentBlockhash
-
-    const signedTransaction = await signTransaction(transfer_in_transaction)
-
-    const body_transaction = bs58.encode(signedTransaction.serialize({ requireAllSignatures: false }))
-    console.log(body_transaction)
-
-    await APIRequest.post('/deposit', { transaction: body_transaction, amount: 100 })
-
-
-    // toPlaced()
+  const placeBet = async () => {
+    toPlaced()
   }
 
   return (
@@ -196,7 +145,7 @@ const Home = () => {
               <span>元</span>
             </div>
 
-            <div className="mt-10 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={() => placeBet(address)}>
+            <div className="mt-10 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={() => placeBet()}>
               Place Bet
             </div>
           </div>
@@ -213,9 +162,9 @@ const Home = () => {
         </div>
       }
 
-      <button onClick={() => openWallet()} className="p-2 px-4 bg-secondary rounded-2xl">
+      {/* <button onClick={() => openWallet()} className="p-2 px-4 bg-secondary rounded-2xl">
         錢包
-      </button>
+      </button> */}
     </div>
   )
 }

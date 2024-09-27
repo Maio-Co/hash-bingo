@@ -6,6 +6,9 @@ import Layout from '@/pages/layout'
 const routes = [
   { key: 'home', path: '/', index: true, component: lazy(() => import('@/pages/home')) },
   { key: 'game-token', path: '/game-token', index: true, component: lazy(() => import('@/pages/game-token')) },
+  { key: 'withdraw', path: '/withdraw', index: true, component: lazy(() => import('@/pages/token-withdraw')) },
+  { key: 'deposit', path: '/deposit', index: true, component: lazy(() => import('@/pages/token-deposit')) },
+  { key: 'successful', path: '/successful', index: true, component: lazy(() => import('@/pages/successful')) },
   { key: 'not-found', path: '*', index: false, component: Layout.NotFound },
 ]
 
