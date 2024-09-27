@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
       port: 8000,
       proxy: {
         '^/api': {
-          target: mode === 'development' ? 'https://iwdpir376d.execute-api.ap-northeast-1.amazonaws.com/dev' : 'https://staging-api.bingo.api.maio.co',
+          target: 'https://iwdpir376d.execute-api.ap-northeast-1.amazonaws.com/dev',
           rewrite: path => path.replace(/^\/api/, ''),
           changeOrigin: true,
           secure: false,

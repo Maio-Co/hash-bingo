@@ -1,8 +1,7 @@
 import axios from 'axios'
-// import { toCamel } from '@/utils'
+import { isDevelopmentMode } from '@/utils'
 
-// const BASE_URL = isDevelopmentMode() ? 'https://domain/api' : '/api'
-const BASE_URL = '/api'
+const BASE_URL = isDevelopmentMode() ? '/api' : 'https://staging-api.bingo.api.maio.co'
 
 export const APIRequest = axios.create({ baseURL: BASE_URL, withCredentials: true })
 
