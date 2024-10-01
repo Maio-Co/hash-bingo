@@ -1,7 +1,8 @@
-import { Suspense, useState } from 'react'
+import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Header from './header'
+import Footer from './footer'
 import Login from './login'
 import ProgressCircular from '@/components/progress-circular'
 import Button from '@mui/material/Button'
@@ -11,6 +12,7 @@ import { useAuthCore } from '@particle-network/auth-core-modal'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
 import LoadingContainer from '@/context/loading-context'
+import DrawerContainer from '@/context/provider-context copy'
 
 interface LayoutProps {
   isErrorPage?: boolean
@@ -20,16 +22,15 @@ interface LayoutProps {
 const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
   const { isLoading } = LoadingContainer.useContainer()
   const { isLogin } = LoginContainer.useContainer()
+  const { isOpenDrawer, openDrawer, closeDrawer } = DrawerContainer.useContainer()
   const { userInfo } = useAuthCore()
+
   const navigate = useNavigate()
 
   const toastOption = {  style: { wordBreak: 'break-all' } } as any
 
-  const [isOpenDrawer, setIsOpenDrawer] = useState(false)
-  const openDrawer = () => setIsOpenDrawer(true)
-
   const toNavigate = (path: string) => {
-    setIsOpenDrawer(false)
+    closeDrawer()
     navigate(path)
   }
 
@@ -40,16 +41,17 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
         { isLogin &&
           <>
             <Header openDrawer={openDrawer} />
-            <section className="flex-1 w-full">
+            <section className="w-full h-[calc(100vh-144px)] overflow-auto">
               { isErrorPage ? children : <Outlet /> }
             </section>
+            <Footer />
           </>
         }
 
         <Toaster position="top-center" reverseOrder={true} toastOptions={toastOption}/>
       </main>
 
-      <Drawer open={isOpenDrawer} onClose={() => setIsOpenDrawer(false)}>
+      <Drawer open={isOpenDrawer} onClose={closeDrawer}>
         <div className="w-[80vw] h-full p-4 flex flex-col bg-bg">
           <div className="mb-6 py-2 border-b-2 border-bg-dark">
             <div className="mb-2 text-primary text-2xl font-bold">Email</div>

@@ -15,7 +15,7 @@ const Withdraw = () => {
   useEffect(() => {
     setTitle(
       <>
-        <div className="absolute t-2 left-1">
+        <div className="absolute t-2 left-4">
           <LeftIcon onClick={() => navigate('/game-token')} />
         </div>
         <div className="mx-auto text-2xl font-bold">Withdraw</div>
@@ -37,7 +37,7 @@ const Withdraw = () => {
   }
 
   return (
-    <div className="p-4 h-[calc(100vh-48px)] flex flex-col">
+    <div className="p-4 h-[calc(100vh-144px)] flex flex-col">
       <div className="mb-6 flex flex-col items-center">
         <USDTIcon className="mb-2" />
         <div className="font-bold text-2xl text-primary">USDT</div>

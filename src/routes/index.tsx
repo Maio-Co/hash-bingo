@@ -5,7 +5,10 @@ import Layout from '@/pages/layout'
 
 const routes = [
   { key: 'home', path: '/', index: true, component: lazy(() => import('@/pages/home')) },
+  { key: 'rules', path: '/rules', index: true, component: lazy(() => import('@/pages/rules')) },
   { key: 'game-token', path: '/game-token', index: true, component: lazy(() => import('@/pages/game-token')) },
+  { key: 'bingo-card', path: '/bingo-card', index: true, component: lazy(() => import('@/pages/bingo-card')) },
+  { key: 'bingo-history', path: '/bingo-history', index: true, component: lazy(() => import('@/pages/bingo-history')) },
   { key: 'withdraw', path: '/withdraw', index: true, component: lazy(() => import('@/pages/token-withdraw')) },
   { key: 'deposit', path: '/deposit', index: true, component: lazy(() => import('@/pages/token-deposit')) },
   { key: 'successful', path: '/successful', index: true, component: lazy(() => import('@/pages/successful')) },

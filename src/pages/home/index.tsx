@@ -1,10 +1,12 @@
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
 import { ChangeEvent, useMemo, useState } from 'react'
-// import { useAuthCore } from '@particle-network/auth-core-modal'
+import { Connection} from '@solana/web3.js'
 import { APIRequest } from '@/service/api-request'
 import RefreshIcon from '@/assets/icons/refresh.svg?react'
 import QuestionIcon from '@/assets/icons/question.svg?react'
+import LoadingContainer from '@/context/loading-context'
+import { useNavigate } from 'react-router'
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
@@ -12,12 +14,13 @@ enum BlockType { Custom = 'Custom', Auto = 'Auto' }
 const createDefaultBingo = () => Array.from(Array(16)).map(() => '')
 
 const Home = () => {
-  // const { openWallet } = useAuthCore()
+  const navigate = useNavigate()
+  const { load, unload } = LoadingContainer.useContainer()
 
   // step page
   const [step, setStep] = useState(Step.Bingo)
-  const toBlock = () => setStep(Step.Block)
   const toBingo = () => setStep(Step.Bingo)
+  const toBlock = () => setStep(Step.Block)
   const toPlaced = () => setStep(Step.Placed)
 
   // bingo number
@@ -26,12 +29,14 @@ const Home = () => {
   const isGenerate = useMemo(() => bingoList.every(item => item !== ''),[bingoList])
 
   const generation = async () => {
+    load()
     const bingoNumber = await APIRequest.get('/getboard')
       .then(res => res.data)
       .then(res => res.board || createDefaultBingo())
       .catch(() => createDefaultBingo())
 
     setBingoList(bingoNumber)
+    unload()
   }
 
   // block form
@@ -40,7 +45,25 @@ const Home = () => {
 
   // place bet
   const placeBet = async () => {
+    load()
+
+    const network = 'https://api.devnet.solana.com'
+    const connection = new Connection(network)
+    const canUseBlockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 200
+
+    const data = {
+      block: blockType === BlockType.Auto ? String(canUseBlockHeight) : blockInput,
+      board: bingoList,
+      amount: 100,
+    }
+
+    // const { isError } = await APIRequest.get('/bet', { data })
+    await APIRequest.get('/bet', { data })
+      .then(res => ({ isError: false, value: res.data }))
+      .catch(() => ({ isError: true, value: null }))
+
     toPlaced()
+    unload()
   }
 
   return (
@@ -88,7 +111,7 @@ const Home = () => {
           </section>
 
           <div className="mb-4 flex">
-            <QuestionIcon className="ml-auto" />
+            <QuestionIcon className="ml-auto" onClick={() => navigate('/rules')} />
           </div>
 
           <div className="flex justify-center">
@@ -122,32 +145,40 @@ const Home = () => {
           <div className="mt-40">
             <div className="mx-4 px-1 py-3 flex items-center justify-between gap-2 text-xl border-b border-bg-dark">
               <div className="flex gap-4">
-                <span>注數</span>
+                <span>Bets: </span>
                 <span className="text-secondary">1</span>
               </div>
 
               <div className="flex gap-4">
-                <span>每注</span>
+                <span>Price: </span>
                 <span className="text-secondary">200</span>
-                <span>元</span>
+                <span>USDT</span>
               </div>
 
               <div className="flex gap-4">
-                <span>手續費</span>
+                <span>Fee: </span>
                 <span className="">15%</span>
               </div>
             </div>
 
 
-            <div className="mx-auto py-4 w-fit flex gap-4 text-2xl">
-              <span>總金額</span>
+            <div className="mx-auto py-4 w-fit flex gap-4 text-3xl font-bold">
+              <span>Net</span>
               <span className="text-secondary">230</span>
-              <span>元</span>
+              <span>USDT</span>
             </div>
 
-            <div className="mt-10 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={() => placeBet()}>
-              Place Bet
+
+            <div className="mt-10 w-full flex items-center gap-6">
+              <div className="py-4 px-6 w-1/2 text-xl text-secondary text-center font-semibold rounded-full border border-secondary cursor-pointer" onClick={() => toBingo()}>
+                Back
+              </div>
+
+              <div className="py-4 px-6 w-1/2 text-xl text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={() => placeBet()}>
+                Place Bet
+              </div>
             </div>
+
           </div>
 
         </article>
@@ -157,8 +188,8 @@ const Home = () => {
       {
         step === Step.Placed &&
         <div>
-          <div className="mt-10 text-center text-primary text-3xl font-bold">Bet Placed!</div>
-          <div className="mt-8 mx-auto py-3 px-6 min-w-28 w-fit text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={toBingo}>Check Bets</div>
+          <div className="mt-[40%] text-center text-primary text-4xl font-bold">Bet Placed!</div>
+          <div className="mt-8 mx-auto py-3 px-8 min-w-28 w-fit text-lg text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={toBingo}>Check Bets</div>
         </div>
       }
 

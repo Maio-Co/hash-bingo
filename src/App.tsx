@@ -10,7 +10,7 @@ import NotFound from '@/assets/images/not-found.png'
 import { AuthType } from '@particle-network/auth-core'
 import { solana, solanaDevnet } from '@particle-network/authkit/chains'
 import LoadingContainer from './context/loading-context'
-// import { solana, solanaDevnet } from '@particle-network/authkit/chains'
+import DrawerContainer from './context/provider-context copy'
 
 import('buffer').then(({ Buffer }) => {
   window.Buffer = Buffer
@@ -22,7 +22,6 @@ const App = () => {
       projectId: '71013a88-20c7-4719-bcc9-70f51d080ae6',
       clientKey: 'cqLTcP5sUciuwMoFqLCMYrhPNleJuTjrs5LDjgvL',
       appId: '3e4b05ec-6311-437c-b93c-20122efc3af5',
-      // appId: '48b82af2-7f3e-45ab-b994-ca8f97fbf263',
       authTypes: [AuthType.google],
       customStyle: { logo: NotFound },
       wallet: {
@@ -49,15 +48,17 @@ const App = () => {
 
       <ThemeProvider theme={theme}>
         <LoadingContainer.Provider>
-          <ProviderContainer.Provider>
-            <LoginContainer.Provider>
-              <BalancesContainer.Provider>
-                <TitleContainer.Provider>
-                  <Router />
-                </TitleContainer.Provider>
-              </BalancesContainer.Provider>
-            </LoginContainer.Provider>
-          </ProviderContainer.Provider>
+          <DrawerContainer.Provider>
+            <ProviderContainer.Provider>
+              <LoginContainer.Provider>
+                <BalancesContainer.Provider>
+                  <TitleContainer.Provider>
+                    <Router />
+                  </TitleContainer.Provider>
+                </BalancesContainer.Provider>
+              </LoginContainer.Provider>
+            </ProviderContainer.Provider>
+          </DrawerContainer.Provider>
         </LoadingContainer.Provider>
       </ThemeProvider>
     </AuthCoreContextProvider>

@@ -15,7 +15,7 @@ const GameToken = () => {
   useEffect(() => {
     setTitle(
       <>
-        <div className="absolute t-2 left-1">
+        <div className="absolute t-2 left-4">
           <LeftIcon onClick={() => navigate('/')} />
         </div>
         <div className="mx-auto text-2xl font-bold">Game Token</div>

@@ -24,7 +24,7 @@ const Deposit = () => {
   useEffect(() => {
     setTitle(
       <>
-        <div className="absolute t-2 left-1">
+        <div className="absolute t-2 left-4">
           <LeftIcon onClick={() => navigate('/game-token')} />
         </div>
         <div className="mx-auto text-2xl font-bold">Deposit</div>
@@ -82,11 +82,8 @@ const Deposit = () => {
 
     const body_transaction = bs58.encode(signedTransaction.serialize({ requireAllSignatures: false }))
     await APIRequest.post('/deposit', { transaction: body_transaction, amount: number })
-    console.log(1)
     unload()
-    console.log(2)
     onClose()
-    console.log(3)
     navigate('/successful')
   }
 
@@ -95,7 +92,7 @@ const Deposit = () => {
   const onClose = () => setIsOpen(false)
 
   return (
-    <div className="p-4 h-[calc(100vh-48px)] flex flex-col">
+    <div className="p-4 h-[calc(100vh-144px)] flex flex-col">
       <input
         value={amount}
         onChange={onChangeAmount}
