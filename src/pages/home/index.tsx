@@ -57,12 +57,12 @@ const Home = () => {
       amount: 100,
     }
 
-    // const { isError } = await APIRequest.get('/bet', { data })
-    await APIRequest.get('/bet', { data })
+    const { isError } = await APIRequest.post('/bet', data)
       .then(res => ({ isError: false, value: res.data }))
       .catch(() => ({ isError: true, value: null }))
 
-    toPlaced()
+    if (!isError) toPlaced()
+
     unload()
   }
 

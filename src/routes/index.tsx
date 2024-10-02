@@ -7,11 +7,12 @@ const routes = [
   { key: 'home', path: '/', index: true, component: lazy(() => import('@/pages/home')) },
   { key: 'rules', path: '/rules', index: true, component: lazy(() => import('@/pages/rules')) },
   { key: 'game-token', path: '/game-token', index: true, component: lazy(() => import('@/pages/game-token')) },
-  { key: 'bingo-card', path: '/bingo-card', index: true, component: lazy(() => import('@/pages/bingo-card')) },
-  { key: 'bingo-history', path: '/bingo-history', index: true, component: lazy(() => import('@/pages/bingo-history')) },
+  { key: 'bingo-history', path: '/history', index: true, component: lazy(() => import('@/pages/bingo-history')) },
+  { key: 'bingo-card', path: '/bingo-card/:id', index: true, component: lazy(() => import('@/pages/bingo-card')) },
   { key: 'withdraw', path: '/withdraw', index: true, component: lazy(() => import('@/pages/token-withdraw')) },
   { key: 'deposit', path: '/deposit', index: true, component: lazy(() => import('@/pages/token-deposit')) },
   { key: 'successful', path: '/successful', index: true, component: lazy(() => import('@/pages/successful')) },
+  { key: 'congratulations', path: '/congratulations', index: true, component: lazy(() => import('@/pages/congratulations')) },
   { key: 'not-found', path: '*', index: false, component: Layout.NotFound },
 ]
 

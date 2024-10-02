@@ -10,7 +10,7 @@ import NotFound from '@/assets/images/not-found.png'
 import { AuthType } from '@particle-network/auth-core'
 import { solana, solanaDevnet } from '@particle-network/authkit/chains'
 import LoadingContainer from './context/loading-context'
-import DrawerContainer from './context/provider-context copy'
+import DrawerContainer from './context/drawer-context'
 
 import('buffer').then(({ Buffer }) => {
   window.Buffer = Buffer

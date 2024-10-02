@@ -2,7 +2,7 @@ import TitleContainer from '@/context/title-context'
 import UserIcon from '@/assets/icons/user.svg?react'
 import CloseIcon from '@/assets/icons/close.svg?react'
 import { useEffect } from 'react'
-import DrawerContainer from '@/context/provider-context copy'
+import DrawerContainer from '@/context/drawer-context'
 import { useNavigate } from 'react-router'
 
 

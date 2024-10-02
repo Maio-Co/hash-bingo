@@ -12,7 +12,7 @@ import { useAuthCore } from '@particle-network/auth-core-modal'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
 import LoadingContainer from '@/context/loading-context'
-import DrawerContainer from '@/context/provider-context copy'
+import DrawerContainer from '@/context/drawer-context'
 
 interface LayoutProps {
   isErrorPage?: boolean
