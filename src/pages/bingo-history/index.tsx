@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router'
 import { timeFormat } from '@/utils'
 import LoadingContainer from '@/context/loading-context'
 
-
 const BingoHistory = () => {
   const navigate = useNavigate()
 
@@ -28,22 +27,22 @@ const BingoHistory = () => {
   const [searchParams, setSearchParams] = useState({
     page: 1,
     pageSize: 10,
-    filter: 'all',
+    filter: '',
   })
   const [total, setTotal] = useState(0)
 
-  const onChangeFilter = (event: ChangeEvent<HTMLSelectElement>) => setSearchParams(prev => ({ ...prev, filter: event.target.value }))
+  const onChangeFilter = (event: ChangeEvent<HTMLSelectElement>) => setSearchParams(prev => ({ ...prev, page: 1, filter: event.target.value }))
   const onChangePage = (page: number) => setSearchParams(prev => ({ ...prev, page: page }))
 
   const [history, setHistory] = useState<any[]>([])
 
   const getHistory = async (page: number) => {
     load()
-    const params = { page, pageSize: searchParams.pageSize }
+    const params = { page, pageSize: searchParams.pageSize } as any
+    // if (searchParams.filter) params.filter = searchParams.filter
     const { isError, value } = await APIRequest.get('/history', { params })
       .then(res => ({ isError: false, value: res.data }))
       .catch()
-
 
     if (!isError) {
       setHistory(prev => [...prev, ...(value?.history || [])])
@@ -55,17 +54,22 @@ const BingoHistory = () => {
 
   useEffect(() => {
     getHistory(searchParams.page)
-  }, [searchParams])
+  }, [searchParams.page])
+
+  // useEffect(() => {
+  //   setHistory([])
+  //   getHistory(1)
+  // }, [searchParams.filter])
 
   return (
     <div className="p-4 flex flex-col">
 
       <select value={searchParams.filter} onChange={onChangeFilter} className="mb-4 w-full px-4 py-2 border-2 border-[#CCC0B2] rounded-lg bg-white">
-        <option value={1}>All</option>
-        <option value={1}>Bingo</option>
-        <option value={2}>Beat</option>
-        <option value={3}>Pending</option>
-        <option value={3}>Missed</option>
+        <option value={''}>All</option>
+        <option value={'bingo'}>Bingo</option>
+        <option value={'beat'}>Beat</option>
+        <option value={'pending'}>Pending</option>
+        <option value={'missed'}>Missed</option>
       </select>
 
       <div className="mb-2 px-6 py-2 flex items-center gap-4 bg-[#CCC0B2] rounded-xl">

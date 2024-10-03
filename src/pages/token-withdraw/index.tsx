@@ -6,9 +6,13 @@ import USDTIcon from '@/assets/icons/usdt.svg?react'
 import TextField from '@mui/material/TextField'
 import BalancesContainer from '@/context/balances-context'
 import LoginContainer from '@/context/login-context'
+import { APIRequest } from '@/service/api-request'
+import LoadingContainer from '@/context/loading-context'
+import { Dialog, DialogTitle, DialogContent } from '@mui/material'
 
 const Withdraw = () => {
   const navigate = useNavigate()
+  const { load, unload } = LoadingContainer.useContainer()
   const { setTitle } = TitleContainer.useContainer()
   const { balances } = BalancesContainer.useContainer()
 
@@ -33,8 +37,22 @@ const Withdraw = () => {
   // Withdraw
   const withdrawToken = async (address: string, amount: string) => {
     if (!address) return
-    console.log(address, amount)
+
+    load()
+    const data = { amount }
+    const res = await APIRequest.post('/withdraw', data).then(res => res.data)
+
+    unload()
+
+    if (res.tx) {
+      navigate('/successful')
+      onClose()
+    }
   }
+
+  // dialog
+  const [isOpen, setIsOpen] = useState(false)
+  const onClose = () => setIsOpen(false)
 
   return (
     <div className="p-4 h-[calc(100vh-144px)] flex flex-col">
@@ -44,7 +62,7 @@ const Withdraw = () => {
       </div>
 
       <TextField label="Amount" variant="outlined" className="!mb-2 w-full" value={amount} onChange={onChangeAmount} />
-      <div className="mb-16 px-4">Balance: { balances.balance } USDT</div>
+      <div className="mb-16 px-4">Balance: { balances.available } USDT</div>
 
       <div className="mb-4 p-3 border border-[#CCC0B2] text-primary rounded-2xl">
         Fee：0.00005 USDT
@@ -55,11 +73,40 @@ const Withdraw = () => {
       </div>
 
       <div
-        onClick={() => withdrawToken(address || '', amount)}
+        onClick={() => setIsOpen(true)}
         className="py-4 mt-auto mb-10 mx-auto w-1/2 text-center bg-secondary text-white font-bold rounded-3xl"
       >
         CONFIRM
       </div>
+
+
+      <Dialog open={isOpen} onClose={onClose}>
+        <DialogTitle>
+          <div className="font-bold text-2xl text-center">Withdraw</div>
+        </DialogTitle>
+
+        <DialogContent>
+          <div className="mb-4 text-lg">Withdraw Amount：{amount} USDT</div>
+
+          <div className="mb-10 text-lg">Fee：0.00005 USDT</div>
+
+          <div className="flex gap-2">
+            <div
+              onClick={onClose}
+              className="py-2 w-1/2 rounded-3xl border border-secondary text-secondary text-center font-bold"
+            >
+              Back
+            </div>
+            <div
+              onClick={() => withdrawToken(address || '', amount)}
+              className="py-2 w-1/2 rounded-3xl bg-secondary text-white text-center font-bold"
+            >
+              Confirm
+            </div>
+          </div>
+        </DialogContent>
+
+      </Dialog>
     </div>
   )
 }

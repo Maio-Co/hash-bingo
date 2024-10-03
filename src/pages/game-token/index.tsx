@@ -35,7 +35,7 @@ const GameToken = () => {
         <div onClick={() => navigate('/deposit')} className="py-3 w-1/2 bg-primary-dark font-semibold text-white text-center rounded-3xl">Deposit</div>
       </div>
 
-      <div className="py-2 font-bold text-2xl text-primary border-b border-[#CCC0B2]">Transactions</div>
+      {/* <div className="py-2 font-bold text-2xl text-primary border-b border-[#CCC0B2]">Transactions</div> */}
 
     </div>
   )

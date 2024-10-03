@@ -37,7 +37,7 @@ const BingoCard = () => {
   const getBingoCardDetail = async (id: string) => {
     load()
     const res = await APIRequest.get(`/history/${encodeURIComponent(id)}`).then(res => res.data).catch(() => {})
-    setDetail({ ... res, status: 'beat' })
+    setDetail({ ...res })
     setBingoList(res.board)
     unload()
   }

@@ -37,7 +37,7 @@ const Deposit = () => {
   const { address, loginInfo } = LoginContainer.useContainer()
 
   // amount
-  const [amount, setAmount] = useState('0')
+  const [amount, setAmount] = useState('')
   const onChangeAmount = (event: ChangeEvent<HTMLInputElement>) => setAmount(event.target.value)
   const calcAmount = (number: number) => {
     if (number === -1 && amount === '0') return
