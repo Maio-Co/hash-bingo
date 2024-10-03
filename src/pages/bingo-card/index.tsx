@@ -3,10 +3,14 @@ import TitleContainer from '@/context/title-context'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import UserIcon from '@/assets/icons/user.svg?react'
+import { APIRequest } from '@/service/api-request'
+import { timeFormat } from '@/utils'
+import LoadingContainer from '@/context/loading-context'
 
 const BingoCard = () => {
   const navigate = useNavigate()
 
+  const { load, unload } = LoadingContainer.useContainer()
   const { openDrawer } = DrawerContainer.useContainer()
 
   const { setTitle } = TitleContainer.useContainer()
@@ -24,10 +28,31 @@ const BingoCard = () => {
 
   const { id = '' } = useParams()
 
-  console.log(id)
-
   const createDefaultBingo = () => Array.from(Array(16)).map(() => '')
-  const [bingoList] = useState(createDefaultBingo())
+  const [bingoList, setBingoList] = useState(createDefaultBingo())
+
+  // get bingo card
+  const [detail, setDetail] = useState({} as any)
+
+  const getBingoCardDetail = async (id: string) => {
+    load()
+    const res = await APIRequest.get(`/history/${encodeURIComponent(id)}`).then(res => res.data).catch(() => {})
+    setDetail({ ... res, status: 'beat' })
+    setBingoList(res.board)
+    unload()
+  }
+
+  useEffect(() => {
+    if (id) getBingoCardDetail(id)
+  }, [id])
+
+  // collect
+  const collectBingoCard = async (id: string) => {
+    load()
+    const data = { id: id }
+    await APIRequest.post('/collect', data).then(res => res.data).catch(() => {})
+    unload()
+  }
 
   return (
     <div className="p-6">
@@ -63,19 +88,22 @@ const BingoCard = () => {
 
       </section>
 
-      <div className="mb-4 py-3 text-3xl text-primary text-center font-bold bg-bg-dark">Block Pending</div>
+      { detail.status === 'bingo' && <div className="mb-4 py-3 text-3xl text-[#49454F] text-center font-bold bg-[#E8C948] capitalize">{detail?.status || '-'}</div> }
+      { detail.status !== 'bingo' && <div className="mb-4 py-3 text-3xl text-primary text-center font-bold bg-bg-dark capitalize">{detail?.status || '-'}</div> }
 
       <div>
         <span className="font-bold">Block：</span>
-        <span>{123}</span>
+        <span>{detail?.block || '-'}</span>
       </div>
+
       <div>
         <span className="font-bold">Bet Time：</span>
-        <span>{123}</span>
+        <span>{timeFormat(detail?.createdAt || '-')}</span>
       </div>
 
-
-      <div className="mt-8 py-3 w-full text-center rounded-3xl text-xl font-bold text-white bg-bg-dark">Refresh</div>
+      { (detail?.status === 'pending' || !detail.status) && <div onClick={() => getBingoCardDetail(id)} className="mt-8 py-3 w-full text-center rounded-3xl text-xl font-bold text-white bg-bg-dark">Refresh</div>}
+      { detail?.status === 'bingo' && <div onClick={() => collectBingoCard(id)} className="mt-8 py-3 w-full text-center rounded-3xl text-xl font-bold text-white bg-secondary">Collect</div>}
+      { (detail?.status === 'beat' || detail?.status === 'missed') && <div onClick={() => navigate('/')} className="mt-8 py-3 w-full text-center rounded-3xl text-xl font-bold text-white bg-secondary">Again</div>}
     </div>
   )
 }
