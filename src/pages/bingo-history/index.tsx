@@ -4,11 +4,14 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import UserIcon from '@/assets/icons/user.svg?react'
 import DrawerContainer from '@/context/drawer-context'
 import { useNavigate } from 'react-router'
+import { timeFormat } from '@/utils'
+import LoadingContainer from '@/context/loading-context'
 
 
 const BingoHistory = () => {
   const navigate = useNavigate()
 
+  const { load, unload } = LoadingContainer.useContainer()
   const { openDrawer } = DrawerContainer.useContainer()
   const { setTitle } = TitleContainer.useContainer()
   useEffect(() => {
@@ -27,17 +30,27 @@ const BingoHistory = () => {
     pageSize: 10,
     filter: 'all',
   })
+  const [total, setTotal] = useState(0)
 
   const onChangeFilter = (event: ChangeEvent<HTMLSelectElement>) => setSearchParams(prev => ({ ...prev, filter: event.target.value }))
+  const onChangePage = (page: number) => setSearchParams(prev => ({ ...prev, page: page }))
 
-  const [history, setHistory] = useState([])
+  const [history, setHistory] = useState<any[]>([])
 
   const getHistory = async (page: number) => {
+    load()
     const params = { page, pageSize: searchParams.pageSize }
     const { isError, value } = await APIRequest.get('/history', { params })
-      .then(res => ({ isError: false, value: res.data.history }))
+      .then(res => ({ isError: false, value: res.data }))
       .catch()
-    if (!isError) setHistory(value)
+
+
+    if (!isError) {
+      setHistory(prev => [...prev, ...(value?.history || [])])
+      setTotal(value.total || 0)
+    }
+
+    unload()
   }
 
   useEffect(() => {
@@ -55,24 +68,25 @@ const BingoHistory = () => {
         <option value={3}>Missed</option>
       </select>
 
-      <div className="mb-4 px-6 py-2 flex items-center gap-4 bg-[#CCC0B2] rounded-xl">
+      <div className="mb-2 px-6 py-2 flex items-center gap-4 bg-[#CCC0B2] rounded-xl">
         <div className="w-1/3 text-primary font-bold">Block</div>
         <div className="w-1/3 text-primary font-bold">Time</div>
         <div className="w-1/3 text-primary font-bold">Status</div>
       </div>
 
-      <section className="mb-4 h-[calc(100vh-320px)] overflow-auto">
-        {history.map((_, index) =>
-          <article key={index} className="px-2 flex items-center gap-4" onClick={() => navigate(`/bingo-card/${index}`)}>
-            <div className="w-1/3 text-primary font-bold">Block</div>
-            <div className="w-1/3 text-primary font-bold">Time</div>
-            <div className="w-1/3 text-primary font-bold">Status</div>
+      <section className="mb-4 h-[calc(100vh-260px)] overflow-auto">
+        {history.map((item, index) =>
+          <article key={item.id} className="px-6 py-2 flex items-center gap-4 border-b border-bg-dark" onClick={() => navigate(`/bingo-card/${index}`)}>
+            <div className="w-1/3 text-primary font-bold">{item.block}</div>
+            <div className="w-1/3 text-primary font-bold text-sm">{timeFormat(item.createdAt)}</div>
+            <div className="w-1/3 text-primary font-bold capitalize" >
+              { item.status === 'bingo' ? <span className="text-secondary">{item.status}</span> : <span>{item.status}</span> }
+            </div>
           </article>
         )}
+
+        { total > history.length && <div className="my-4 mx-auto py-3 px-6 bg-secondary text-white w-fit font-bold rounded-3xl" onClick={() => onChangePage(searchParams.page + 1)}>Load More</div> }
       </section>
-
-      <div className="mt-auto mx-auto py-3 px-6 bg-secondary text-white w-fit font-bold rounded-3xl">Load More</div>
-
     </div>
   )
 }

@@ -54,7 +54,7 @@ const Home = () => {
     const data = {
       block: blockType === BlockType.Auto ? String(canUseBlockHeight) : blockInput,
       board: bingoList,
-      amount: 100,
+      amount: 10,
     }
 
     const { isError } = await APIRequest.post('/bet', data)
@@ -151,7 +151,7 @@ const Home = () => {
 
               <div className="flex gap-4">
                 <span>Price: </span>
-                <span className="text-secondary">200</span>
+                <span className="text-secondary">10</span>
                 <span>USDT</span>
               </div>
 
@@ -164,7 +164,7 @@ const Home = () => {
 
             <div className="mx-auto py-4 w-fit flex gap-4 text-3xl font-bold">
               <span>Net</span>
-              <span className="text-secondary">230</span>
+              <span className="text-secondary">8.5</span>
               <span>USDT</span>
             </div>
 
