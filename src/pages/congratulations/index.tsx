@@ -23,7 +23,7 @@ const Congratulations = () => {
       <div className="mt-10 mb-6 text-xl font-bold text-[#49454F]">Collect Reward</div>
       <div className="mb-12 text-3xl font-bold text-[#49454F]">Congratulations !</div>
       <div className="mb-4 text-sm">You’ve won</div>
-      <div className="font-bold text-4xl text-[#E8C948]">100 USDT</div>
+      <div className="font-bold text-4xl text-[#E8C948]">100 Game Points</div>
 
       <div className="mt-40 mb-10 p-3 rounded-xl border border-bg-dark text-primary">
         Please confirm to collect your reward. The amount will be transferred to your connected wallet.

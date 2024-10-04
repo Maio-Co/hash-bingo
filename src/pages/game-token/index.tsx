@@ -6,14 +6,12 @@ import BalancesContainer from '@/context/balances-context'
 import { APIRequest } from '@/service/api-request'
 import LoadingContainer from '@/context/loading-context'
 
-
-
 const GameToken = () => {
   const navigate = useNavigate()
 
   const { load, unload } = LoadingContainer.useContainer()
 
-  const { balances } = BalancesContainer.useContainer()
+  const { balances, decimals, formatAmount } = BalancesContainer.useContainer()
 
   const { setTitle } = TitleContainer.useContainer()
   useEffect(() => {
@@ -44,7 +42,7 @@ const GameToken = () => {
     <div className="p-4">
       <div className="mb-4 p-4 rounded-2xl border-4 border-bg-dark bg-[#CCC0B2]">
         <div className="mb-2 font-bold text-xl text-primary">Balance</div>
-        <div className="font-bold text-4xl">{ balances.balance } USDT</div>
+        <div className="font-bold text-4xl">{ formatAmount(Number(balances.balance), decimals) } Game Points</div>
       </div>
 
       <div className="mb-7 flex items-center gap-6">
@@ -62,7 +60,7 @@ const GameToken = () => {
             </span>
 
             <span className="ml-auto" style={{  color: item.amount > 0 ? '#E5935A' : '' }}>
-              {`${item.amount > 0 ? '+' : ''}${item.amount}`}
+              {`${item.amount > 0 ? '+' : ''}${formatAmount(item.amount, decimals)}`}
             </span>
 
           </div>

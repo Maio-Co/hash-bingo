@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router'
 import LeftIcon from '@/assets/icons/arrow-left.svg?react'
 import LoginContainer from '@/context/login-context'
 import { PublicKey, Transaction} from '@solana/web3.js'
-import { Program, AnchorProvider, BN } from '@coral-xyz/anchor'
+import { Program, AnchorProvider } from '@coral-xyz/anchor'
 import idl from '@/global/bingo_game.json'
 import bs58 from 'bs58'
 import { APIRequest } from '@/service/api-request'
@@ -14,10 +14,11 @@ import LoadingContainer from '@/context/loading-context'
 import { connection } from '@/global'
 import toast from 'react-hot-toast'
 import BalancesContainer from '@/context/balances-context'
+import { BN } from 'bn.js'
 
 const Deposit = () => {
   const { load, unload } = LoadingContainer.useContainer()
-  const { getBalance } = BalancesContainer.useContainer()
+  const { getBalance, decimals, parseAmount } = BalancesContainer.useContainer()
 
   const navigate = useNavigate()
   const { setTitle } = TitleContainer.useContainer()
@@ -51,7 +52,7 @@ const Deposit = () => {
 
     load()
 
-    const number = Number(amount) * 10
+    const number = parseAmount(Number(amount), decimals)
 
     // program
     const provider = new AnchorProvider(connection as any, wallet, { preflightCommitment: 'processed' })
@@ -105,7 +106,6 @@ const Deposit = () => {
         value={amount}
         onChange={onChangeAmount}
         type="text"
-        placeholder="1 Points = 10 USDT"
         className="mx-3 mb-10 p-3 text-lg rounded-2xl border border-[#CCC0B2] bg-transparent"
       />
 
@@ -142,7 +142,7 @@ const Deposit = () => {
             <div className="text-center text-3xl font-bold">{amount}</div>
           </div>
 
-          <div className="mb-10 text-center">Fee : 0.00 USDT</div>
+          <div className="mb-10 text-center">Fee : 0.00 Game Points</div>
 
           <div className="flex gap-2">
             <div

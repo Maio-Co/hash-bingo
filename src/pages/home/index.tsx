@@ -18,7 +18,7 @@ const createDefaultBingo = () => Array.from(Array(16)).map(() => '')
 const Home = () => {
   const navigate = useNavigate()
   const { load, unload } = LoadingContainer.useContainer()
-  const { getBalance } = BalancesContainer.useContainer()
+  const { getBalance, decimals, parseAmount } = BalancesContainer.useContainer()
 
   // step page
   const [step, setStep] = useState(Step.Bingo)
@@ -54,7 +54,7 @@ const Home = () => {
     const data = {
       block: blockType === BlockType.Auto ? String(blockHeight) : blockInput,
       board: bingoList,
-      amount: 10,
+      amount: parseAmount(10, decimals),
     }
 
     const { isError } = await APIRequest.post('/bet', data)
@@ -178,7 +178,7 @@ const Home = () => {
               <div className="flex gap-4">
                 <span>Price: </span>
                 <span className="text-secondary">8.5</span>
-                <span>USDT</span>
+                <span>Game Points</span>
               </div>
 
               <div className="flex gap-4">
@@ -191,7 +191,7 @@ const Home = () => {
             <div className="mx-auto py-4 w-fit flex gap-4 text-3xl font-bold">
               <span>Net</span>
               <span className="text-secondary">10</span>
-              <span>USDT</span>
+              <span>Game Points</span>
             </div>
 
 

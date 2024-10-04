@@ -5,6 +5,9 @@ import { APIRequest } from '@/service/api-request'
 import { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next'
 import LoginContainer from './login-context'
+// import { getMint } from '@solana/spl-token'
+// import { connection } from '@/global'
+// import { PublicKey } from '@solana/web3.js'
 
 const defaultBalances = {
   balance: '-',
@@ -34,7 +37,28 @@ const useBalances = () => {
     }, 100)
   }, [loginInfo.jwt])
 
-  return { balances, getBalance }
+  // token
+  const decimals = 9
+  // const [decimals, setDecimals] = useState(0)
+  // useEffect(() => {
+  //   getDecimals()
+  //   async function getDecimals() {
+  //     const mintInfo = await getMint(connection, new PublicKey(loginInfo.splToken))
+  //     setDecimals(mintInfo.decimals)
+  //   }
+  // }, [loginInfo.splToken])
+
+
+  // convert amount
+  function parseAmount(amount: number, decimals: number) {
+    return amount * Math.pow(10, decimals)
+  }
+
+  function formatAmount(chainAmount: number, decimals: number) {
+    return parseFloat(String(chainAmount / Math.pow(10, decimals))).toFixed(1)
+  }
+
+  return { balances, getBalance, decimals, parseAmount, formatAmount }
 }
 
 const BalancesContainer = createContainer(useBalances)
