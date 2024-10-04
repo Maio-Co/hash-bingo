@@ -31,7 +31,10 @@ const BingoHistory = () => {
   })
   const [total, setTotal] = useState(0)
 
-  const onChangeFilter = (event: ChangeEvent<HTMLSelectElement>) => setSearchParams(prev => ({ ...prev, page: 1, filter: event.target.value }))
+  const onChangeFilter = (event: ChangeEvent<HTMLSelectElement>) => {
+    setHistory([])
+    setSearchParams(prev => ({ ...prev, page: 1, filter: event.target.value }))
+  }
   const onChangePage = (page: number) => setSearchParams(prev => ({ ...prev, page: page }))
 
   const [history, setHistory] = useState<any[]>([])
@@ -39,10 +42,10 @@ const BingoHistory = () => {
   const getHistory = async (page: number) => {
     load()
     const params = { page, pageSize: searchParams.pageSize } as any
-    // if (searchParams.filter) params.filter = searchParams.filter
+    if (searchParams.filter) params.filter = searchParams.filter
     const { isError, value } = await APIRequest.get('/history', { params })
       .then(res => ({ isError: false, value: res.data }))
-      .catch()
+      .catch(() => ({ isError: true, value: [] }))
 
     if (!isError) {
       setHistory(prev => [...prev, ...(value?.history || [])])
@@ -54,12 +57,7 @@ const BingoHistory = () => {
 
   useEffect(() => {
     getHistory(searchParams.page)
-  }, [searchParams.page])
-
-  // useEffect(() => {
-  //   setHistory([])
-  //   getHistory(1)
-  // }, [searchParams.filter])
+  }, [searchParams])
 
   return (
     <div className="p-4 flex flex-col">

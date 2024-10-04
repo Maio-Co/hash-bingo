@@ -36,7 +36,7 @@ const BingoCard = () => {
 
   const getBingoCardDetail = async (id: string) => {
     load()
-    const res = await APIRequest.get(`/history/${encodeURIComponent(id)}`).then(res => res.data).catch(() => {})
+    const res = await APIRequest.get(`/history/${encodeURIComponent(id)}`).then(res => res.data.response).catch(() => {})
     setDetail({ ...res })
     setBingoList(res.board)
     unload()
@@ -65,22 +65,22 @@ const BingoCard = () => {
 
         <article className="m-auto flex flex-col gap-4 w-full">
           <div className="flex gap-4">
-            {bingoList.slice(0, 4).map((item, index) => <div key={`1_${index}`} className="relative w-1/4 pb-[calc(25%-1rem)] flex rounded bg-[#CCC0B2]">
+            {bingoList.slice(0, 4).map((item, index) => <div key={`1_${index}`} style={{ background: detail?.winBoard?.[index] ? '#E8C948' : '' }} className="relative w-1/4 pb-[calc(25%-1rem)] flex rounded bg-[#CCC0B2]">
               <span style={{ color: item ? '' : 'white' }} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 m-auto font-bold text-3xl">{item || '?'}</span>
             </div>)}
           </div>
           <div className="flex gap-4">
-            {bingoList.slice(4, 8).map((item, index) => <div key={`2_${index}`} className="relative w-1/4 pb-[calc(25%-1rem)] flex rounded bg-[#CCC0B2]">
+            {bingoList.slice(4, 8).map((item, index) => <div key={`2_${index}`} style={{ background: detail?.winBoard?.[4 + index] ? '#E8C948' : '' }} className="relative w-1/4 pb-[calc(25%-1rem)] flex rounded bg-[#CCC0B2]">
               <span style={{ color: item ? '' : 'white' }} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 m-auto font-bold text-3xl">{item || '?'}</span>
             </div>)}
           </div>
           <div className="flex gap-4">
-            {bingoList.slice(8, 12).map((item, index) => <div key={`3_${index}`} className="relative w-1/4 pb-[calc(25%-1rem)] flex rounded bg-[#CCC0B2]">
+            {bingoList.slice(8, 12).map((item, index) => <div key={`3_${index}`} style={{ background: detail?.winBoard?.[8 + index] ? '#E8C948' : '' }} className="relative w-1/4 pb-[calc(25%-1rem)] flex rounded bg-[#CCC0B2]">
               <span style={{ color: item ? '' : 'white' }} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 m-auto font-bold text-3xl">{item || '?'}</span>
             </div>)}
           </div>
           <div className="flex gap-4">
-            {bingoList.slice(12, 16).map((item, index) => <div key={`4_${index}`} className="relative w-1/4 pb-[calc(25%-1rem)] flex rounded bg-[#CCC0B2]">
+            {bingoList.slice(12, 16).map((item, index) => <div key={`4_${index}`} style={{ background: detail?.winBoard?.[12 + index] ? '#E8C948' : '' }} className="relative w-1/4 pb-[calc(25%-1rem)] flex rounded bg-[#CCC0B2]">
               <span style={{ color: item ? '' : 'white' }} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 m-auto font-bold text-3xl">{item || '?'}</span>
             </div>)}
           </div>

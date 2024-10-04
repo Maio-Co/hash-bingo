@@ -40,7 +40,7 @@ const Withdraw = () => {
 
     load()
     const data = { amount }
-    const res = await APIRequest.post('/withdraw', data).then(res => res.data)
+    const res = await APIRequest.post('/withdraw', data).then(res => res.data).catch(() => {})
 
     unload()
 

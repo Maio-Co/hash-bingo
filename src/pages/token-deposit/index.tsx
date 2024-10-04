@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import LeftIcon from '@/assets/icons/arrow-left.svg?react'
 import LoginContainer from '@/context/login-context'
-import { PublicKey, Connection, Transaction} from '@solana/web3.js'
+import { PublicKey, Transaction} from '@solana/web3.js'
 import { Program, AnchorProvider, BN } from '@coral-xyz/anchor'
 import idl from '@/global/bingo_game.json'
 import bs58 from 'bs58'
@@ -11,9 +11,7 @@ import { APIRequest } from '@/service/api-request'
 import { useSolana } from '@particle-network/auth-core-modal'
 import { Dialog, DialogTitle, DialogContent } from '@mui/material'
 import LoadingContainer from '@/context/loading-context'
-
-const network = 'https://api.devnet.solana.com'
-const connection = new Connection(network)
+import { connection } from '@/global'
 
 const Deposit = () => {
   const { load, unload } = LoadingContainer.useContainer()
@@ -81,10 +79,13 @@ const Deposit = () => {
     const signedTransaction = await signTransaction(transfer_in_transaction)
 
     const body_transaction = bs58.encode(signedTransaction.serialize({ requireAllSignatures: false }))
-    await APIRequest.post('/deposit', { transaction: body_transaction, amount: number })
+    const res = await APIRequest.post('/deposit', { transaction: body_transaction, amount: number }).then(res => res.data).catch(() => {})
     unload()
-    onClose()
-    navigate('/successful')
+
+    if (res.txid) {
+      onClose()
+      navigate('/successful')
+    }
   }
 
   // dialog
@@ -107,7 +108,7 @@ const Deposit = () => {
         </div>
 
         <div className="w-40 h-24 py-6 border-4 rounded-xl border-[#CCC0B2] text-5xl font-bold bg-white text-center">
-          {amount}
+          {amount || 0}
         </div>
 
         <div className="flex w-16 h-16 rounded-lg border-4 border-bg-dark bg-[#CCC0B2] justify-center items-center">

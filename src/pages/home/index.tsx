@@ -1,12 +1,12 @@
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
-import { ChangeEvent, useMemo, useState } from 'react'
-import { Connection} from '@solana/web3.js'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { APIRequest } from '@/service/api-request'
 import RefreshIcon from '@/assets/icons/refresh.svg?react'
 import QuestionIcon from '@/assets/icons/question.svg?react'
 import LoadingContainer from '@/context/loading-context'
 import { useNavigate } from 'react-router'
+import { connection } from '@/global'
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
@@ -46,13 +46,10 @@ const Home = () => {
   // place bet
   const placeBet = async () => {
     load()
-
-    const network = 'https://api.devnet.solana.com'
-    const connection = new Connection(network)
-    const canUseBlockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 200
+    const blockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 250
 
     const data = {
-      block: blockType === BlockType.Auto ? String(canUseBlockHeight) : blockInput,
+      block: blockType === BlockType.Auto ? String(blockHeight) : blockInput,
       board: bingoList,
       amount: 10,
     }
@@ -65,6 +62,19 @@ const Home = () => {
 
     unload()
   }
+
+  // canUseBlockHeight
+  const [canUseBlockHeight, setCanUseBlockHeight] = useState(0)
+  useEffect(() => {
+    const timer = setInterval(async () => {
+      const blockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 250
+      setCanUseBlockHeight(blockHeight)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const canBetBlock = useMemo(() => Number(blockInput) >= canUseBlockHeight, [canUseBlockHeight, blockInput])
 
   return (
     <div className="px-4 py-4 h-full">
@@ -133,7 +143,14 @@ const Home = () => {
           <div className="px-4">
             <div className="mb-4 flex items-center gap-4">
               <Radio value={BlockType.Custom} checked={blockType === BlockType.Custom} onChange={(event: ChangeEvent<any>) => setBlockType(event.target.value)} />
-              { blockType === BlockType.Custom ? <TextField className="ml-4" id="outlined-basic" label="Enter Block Number" variant="outlined" value={blockInput} onChange={event => setBlockInput(event.target.value)} /> : <span className="text-xl">Enter Block Number</span> }
+              { blockType === BlockType.Custom ?
+                <div>
+                  <TextField className="ml-4" id="outlined-basic" label="Enter Block Number" variant="outlined" value={blockInput} onChange={event => setBlockInput(event.target.value)} error={!canBetBlock} />
+                  { !canBetBlock && <div className="mt-1 text-sm text-[#B3261E]">Error: Cannot bet on existing block!</div> }
+                </div>
+                :
+                <span className="text-xl">Enter Block Number</span>
+              }
             </div>
             <div className="flex items-center gap-4">
               <Radio value={BlockType.Auto} checked={blockType === BlockType.Auto} onChange={(event: ChangeEvent<any>) => setBlockType(event.target.value)} />
@@ -151,7 +168,7 @@ const Home = () => {
 
               <div className="flex gap-4">
                 <span>Price: </span>
-                <span className="text-secondary">10</span>
+                <span className="text-secondary">8.5</span>
                 <span>USDT</span>
               </div>
 
@@ -164,7 +181,7 @@ const Home = () => {
 
             <div className="mx-auto py-4 w-fit flex gap-4 text-3xl font-bold">
               <span>Net</span>
-              <span className="text-secondary">8.5</span>
+              <span className="text-secondary">10</span>
               <span>USDT</span>
             </div>
 
@@ -174,7 +191,7 @@ const Home = () => {
                 Back
               </div>
 
-              <div className="py-4 px-6 w-1/2 text-xl text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={() => placeBet()}>
+              <div className="py-4 px-6 w-1/2 text-xl text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={() => ((blockType === BlockType.Custom && canBetBlock) || blockType === BlockType.Auto) && placeBet()}>
                 Place Bet
               </div>
             </div>
@@ -192,10 +209,6 @@ const Home = () => {
           <div className="mt-8 mx-auto py-3 px-8 min-w-28 w-fit text-lg text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={toBingo}>Check Bets</div>
         </div>
       }
-
-      {/* <button onClick={() => openWallet()} className="p-2 px-4 bg-secondary rounded-2xl">
-        錢包
-      </button> */}
     </div>
   )
 }
