@@ -6,12 +6,15 @@ import UserIcon from '@/assets/icons/user.svg?react'
 import { APIRequest } from '@/service/api-request'
 import { timeFormat } from '@/utils'
 import LoadingContainer from '@/context/loading-context'
+import toast from 'react-hot-toast'
+import BalancesContainer from '@/context/balances-context'
 
 const BingoCard = () => {
   const navigate = useNavigate()
 
   const { load, unload } = LoadingContainer.useContainer()
   const { openDrawer } = DrawerContainer.useContainer()
+  const { getBalance } = BalancesContainer.useContainer()
 
   const { setTitle } = TitleContainer.useContainer()
   useEffect(() => {
@@ -50,7 +53,12 @@ const BingoCard = () => {
   const collectBingoCard = async (id: string) => {
     load()
     const data = { id: id }
-    await APIRequest.post('/collect', data).then(res => res.data).catch(() => {})
+    await APIRequest.post('/collect', data)
+      .then(res => res.data)
+      .catch(() => { toast.error('Collect failed') })
+
+    getBalance()
+
     unload()
   }
 

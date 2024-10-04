@@ -12,9 +12,12 @@ import { useSolana } from '@particle-network/auth-core-modal'
 import { Dialog, DialogTitle, DialogContent } from '@mui/material'
 import LoadingContainer from '@/context/loading-context'
 import { connection } from '@/global'
+import toast from 'react-hot-toast'
+import BalancesContainer from '@/context/balances-context'
 
 const Deposit = () => {
   const { load, unload } = LoadingContainer.useContainer()
+  const { getBalance } = BalancesContainer.useContainer()
 
   const navigate = useNavigate()
   const { setTitle } = TitleContainer.useContainer()
@@ -79,12 +82,16 @@ const Deposit = () => {
     const signedTransaction = await signTransaction(transfer_in_transaction)
 
     const body_transaction = bs58.encode(signedTransaction.serialize({ requireAllSignatures: false }))
-    const res = await APIRequest.post('/deposit', { transaction: body_transaction, amount: number }).then(res => res.data).catch(() => {})
+    const res = await APIRequest.post('/deposit', { transaction: body_transaction, amount: number })
+      .then(res => res.data)
+      .catch(() => toast.error('Deposit Failed'))
+
     unload()
 
     if (res.txid) {
-      onClose()
       navigate('/successful')
+      getBalance()
+      onClose()
     }
   }
 

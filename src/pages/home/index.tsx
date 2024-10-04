@@ -7,6 +7,8 @@ import QuestionIcon from '@/assets/icons/question.svg?react'
 import LoadingContainer from '@/context/loading-context'
 import { useNavigate } from 'react-router'
 import { connection } from '@/global'
+import toast from 'react-hot-toast'
+import BalancesContainer from '@/context/balances-context'
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
@@ -16,6 +18,7 @@ const createDefaultBingo = () => Array.from(Array(16)).map(() => '')
 const Home = () => {
   const navigate = useNavigate()
   const { load, unload } = LoadingContainer.useContainer()
+  const { getBalance } = BalancesContainer.useContainer()
 
   // step page
   const [step, setStep] = useState(Step.Bingo)
@@ -56,9 +59,15 @@ const Home = () => {
 
     const { isError } = await APIRequest.post('/bet', data)
       .then(res => ({ isError: false, value: res.data }))
-      .catch(() => ({ isError: true, value: null }))
+      .catch(() => {
+        toast.error('Insufficient token balance')
+        return { isError: true, value: null }
+      })
 
-    if (!isError) toPlaced()
+    if (!isError) {
+      toPlaced()
+      getBalance()
+    }
 
     unload()
   }

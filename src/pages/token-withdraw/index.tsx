@@ -9,12 +9,13 @@ import LoginContainer from '@/context/login-context'
 import { APIRequest } from '@/service/api-request'
 import LoadingContainer from '@/context/loading-context'
 import { Dialog, DialogTitle, DialogContent } from '@mui/material'
+import toast from 'react-hot-toast'
 
 const Withdraw = () => {
   const navigate = useNavigate()
   const { load, unload } = LoadingContainer.useContainer()
   const { setTitle } = TitleContainer.useContainer()
-  const { balances } = BalancesContainer.useContainer()
+  const { balances, getBalance } = BalancesContainer.useContainer()
 
   useEffect(() => {
     setTitle(
@@ -40,12 +41,15 @@ const Withdraw = () => {
 
     load()
     const data = { amount }
-    const res = await APIRequest.post('/withdraw', data).then(res => res.data).catch(() => {})
+    const res = await APIRequest.post('/withdraw', data)
+      .then(res => res.data)
+      .catch(() => { toast.error('Withdraw Failed') })
 
     unload()
 
     if (res.tx) {
       navigate('/successful')
+      getBalance()
       onClose()
     }
   }
