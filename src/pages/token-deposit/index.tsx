@@ -106,6 +106,7 @@ const Deposit = () => {
         value={amount}
         onChange={onChangeAmount}
         type="text"
+        autoFocus
         className="mx-3 mb-10 p-3 text-lg rounded-2xl border border-[#CCC0B2] bg-transparent"
       />
 
