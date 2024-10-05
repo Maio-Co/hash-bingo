@@ -3,6 +3,7 @@ import { setAuth, APIRequest } from '@/service/api-request'
 import { useEffect, useMemo, useState } from 'react'
 import { createContainer } from 'unstated-next'
 import LoadingContainer from './loading-context'
+import toast from 'react-hot-toast'
 
 interface LoginInfo {
   jwt: string
@@ -33,6 +34,7 @@ const useLogin = () => {
     load()
     await APIRequest.post('/login', { uuid, token, wallet: { address, chain: 'solana' } })
       .then(res => setLoginInfo(res.data as LoginInfo))
+      .catch(() => toast.error('Login failed'))
     unload()
   }
 
