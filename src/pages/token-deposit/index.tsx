@@ -18,7 +18,7 @@ import { BN } from 'bn.js'
 
 const Deposit = () => {
   const { load, unload } = LoadingContainer.useContainer()
-  const { getBalance, decimals, parseAmount } = BalancesContainer.useContainer()
+  const { balances, getBalance, decimals, parseAmount, formatAmount } = BalancesContainer.useContainer()
 
   const navigate = useNavigate()
   const { setTitle } = TitleContainer.useContainer()
@@ -107,15 +107,17 @@ const Deposit = () => {
         onChange={onChangeAmount}
         type="text"
         autoFocus
-        className="mx-3 mb-10 p-3 text-lg rounded-2xl border border-[#CCC0B2] bg-transparent"
+        className="mx-3 mb-2 p-3 text-lg rounded-2xl border border-[#CCC0B2] bg-transparent"
       />
+
+      <div className="mb-10 px-4">Wallet Balance: { formatAmount(Number(balances.tokenBalance), decimals) } Game Points</div>
 
       <div className="mx-auto flex items-center gap-4">
         <div className="flex w-16 h-16 rounded-lg border-4 border-bg-dark bg-[#CCC0B2] justify-center items-center">
           <span className="text-4xl" onClick={() => calcAmount(-1)}>-</span>
         </div>
 
-        <div className="w-40 h-24 py-6 border-4 rounded-xl border-[#CCC0B2] text-5xl font-bold bg-white text-center">
+        <div className="w-40 h-24 py-6 border-4 rounded-xl border-[#CCC0B2] text-4xl font-bold bg-white text-center">
           {amount || 0}
         </div>
 

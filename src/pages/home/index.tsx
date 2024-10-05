@@ -134,7 +134,7 @@ const Home = () => {
           </div>
 
           <div className="flex justify-center">
-            <div className="py-3 px-6 min-w-28 text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={isGenerate ? toBlock : generation}>
+            <div className="my-2 py-3 px-6 min-w-28 text-white text-center font-semibold rounded-full bg-secondary cursor-pointer" onClick={isGenerate ? toBlock : generation}>
               { isGenerate ? 'Next' : 'Generation' }
             </div>
           </div>

@@ -66,7 +66,7 @@ const Withdraw = () => {
       </div>
 
       <TextField label="Amount" variant="outlined" className="!mb-2 w-full" value={amount} onChange={onChangeAmount} />
-      <div className="mb-16 px-4">Available Balance: { formatAmount(Number(balances.available), decimals) } Game Points</div>
+      <div className="mb-16 px-4">Available Balance: { formatAmount(Number(balances.balance), decimals) } Game Points</div>
 
       <div className="mb-4 p-3 border border-[#CCC0B2] text-primary rounded-2xl">
         Fee：0.00005 Game Points

@@ -10,9 +10,10 @@ import LoginContainer from './login-context'
 // import { PublicKey } from '@solana/web3.js'
 
 const defaultBalances = {
-  balance: '-',
-  available: '-',
-  locked: '-',
+  balance: '-', //balance  表示可用餘額 ( pdaTokenBalance  - locked )
+  locked: '-', //locked 表示下注總和
+  pdaTokenBalance: '-', //pdaTokenBalance 表示當前儲值餘額
+  tokenBalance: '-', //tokenBalance 表示該帳號本身未儲值之token數量
 }
 
 const useBalances = () => {
@@ -26,8 +27,9 @@ const useBalances = () => {
 
     setBalance({
       balance: String(res.balance),
-      available: String(res.available),
       locked: String(res.locked),
+      pdaTokenBalance: String(res.pdaTokenBalance),
+      tokenBalance: String(res.tokenBalance),
     })
   }
 
@@ -56,7 +58,8 @@ const useBalances = () => {
   }
 
   function formatAmount(chainAmount: number, decimals: number) {
-    return parseFloat(String(chainAmount / Math.pow(10, decimals))).toFixed(1)
+    const value = parseFloat(String(chainAmount / Math.pow(10, decimals)))
+    return isNaN(value) ? '-' : value.toFixed(1)
   }
 
   return { balances, getBalance, decimals, parseAmount, formatAmount }
