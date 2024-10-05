@@ -101,7 +101,7 @@ const Deposit = () => {
   const onClose = () => setIsOpen(false)
 
   return (
-    <div className="p-4 h-[calc(100vh-144px)] flex flex-col">
+    <div className="p-4 h-[calc(100dvh-144px)] flex flex-col">
       <input
         value={amount}
         onChange={onChangeAmount}

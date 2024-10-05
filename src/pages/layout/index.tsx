@@ -36,12 +36,12 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
 
   return (
     <div className="Frame max-w-screen-sm mx-auto bg-bg">
-      <main className="min-h-screen flex flex-col relative w-full">
+      <main className="min-h-dvh flex flex-col relative w-full">
         { !isLogin && <Login /> }
         { isLogin &&
           <>
             <Header openDrawer={openDrawer} />
-            <section className="w-full h-[calc(100vh-144px)] overflow-auto">
+            <section className="w-full h-[calc(100dvh-144px)] overflow-auto">
               { isErrorPage ? children : <Outlet /> }
             </section>
             <Footer />
@@ -87,7 +87,7 @@ Layout.SuspenseLayout = () => {
 Layout.ErrorBoundary = () => {
   return (
     <Layout isErrorPage>
-      <div className="flex h-[calc(100vh-56px)]">
+      <div className="flex h-[calc(100dvh-56px)]">
         <section className="m-auto p-8 w-full max-w-screen-sm rounded-2xl flex justify-center items-center gap-8 text-white bg-gray-bg shadow">
           {/* <img src={NotFound} className="w-1/2" /> */}
           <div className="w-1/2">
@@ -106,7 +106,7 @@ Layout.ErrorBoundary = () => {
 
 Layout.NotFound = () => {
   return (
-    <div className="flex h-[calc(100vh-56px)]">
+    <div className="flex h-[calc(100dvh-56px)]">
       <section className="m-auto p-8 w-full max-w-screen-sm rounded-2xl flex justify-center items-center gap-8 text-white bg-gray-bg shadow">
         {/* <img src={NotFound} className="w-1/2" /> */}
         <div className="w-1/2">

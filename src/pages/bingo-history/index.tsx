@@ -76,7 +76,7 @@ const BingoHistory = () => {
         <div className="w-1/3 text-primary font-bold">Status</div>
       </div>
 
-      <section className="mb-4 h-[calc(100vh-260px)] overflow-auto">
+      <section className="mb-4 h-[calc(100dvh-260px)] overflow-auto">
         {history.map(item =>
           <article key={item.id} className="px-6 py-2 flex items-center gap-4 border-b border-bg-dark" onClick={() => navigate(`/bingo-card/${item.id}`)}>
             <div className="w-1/3 text-primary font-bold">{item.block}</div>

@@ -51,7 +51,8 @@ const useBalances = () => {
 
   // convert amount
   function parseAmount(amount: number, decimals: number) {
-    return amount * Math.pow(10, decimals)
+    const value = isNaN(amount * Math.pow(10, decimals)) ? 0 : amount * Math.pow(10, decimals)
+    return value
   }
 
   function formatAmount(chainAmount: number, decimals: number) {
