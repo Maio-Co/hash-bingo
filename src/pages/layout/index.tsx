@@ -88,14 +88,14 @@ Layout.ErrorBoundary = () => {
   return (
     <Layout isErrorPage>
       <div className="flex h-[calc(100dvh-56px)]">
-        <section className="m-auto p-8 w-full max-w-screen-sm rounded-2xl flex justify-center items-center gap-8 text-white bg-gray-bg shadow">
+        <section className="m-auto p-8 w-full max-w-screen-sm flex justify-center items-center gap-8 text-primary">
           {/* <img src={NotFound} className="w-1/2" /> */}
-          <div className="w-1/2">
+          <div className="w-4/5">
             <h1 className="mb-2 text-5xl font-black">Oops!</h1>
             <h2 className="mb-4 text-4xl font-black">Get Some Error</h2>
             <p className="mb-6">we're sorry the page you requested could be error. Please go back to the homepage!</p>
             <Link to="/">
-              <Button variant="contained" size="large" fullWidth>Back Homepage</Button>
+              <Button variant="contained" size="large" fullWidth className="!bg-secondary !text-white">Back Homepage</Button>
             </Link>
           </div>
         </section>
@@ -107,14 +107,14 @@ Layout.ErrorBoundary = () => {
 Layout.NotFound = () => {
   return (
     <div className="flex h-[calc(100dvh-56px)]">
-      <section className="m-auto p-8 w-full max-w-screen-sm rounded-2xl flex justify-center items-center gap-8 text-white bg-gray-bg shadow">
+      <section className="m-auto p-8 w-full max-w-screen-sm flex justify-center items-center gap-8 text-primary">
         {/* <img src={NotFound} className="w-1/2" /> */}
-        <div className="w-1/2">
+        <div className="w-4/5">
           <h1 className="mb-2 text-5xl font-black">404</h1>
           <h2 className="mb-4 text-4xl font-black">Page Not Found</h2>
           <p className="mb-6">we're sorry the dpage you requested could not be found. Please go back to the homepage!</p>
           <Link to="/">
-            <Button variant="contained" size="large" fullWidth>Back Homepage</Button>
+            <Button variant="contained" size="large" fullWidth className="!bg-secondary !text-white">Back Homepage</Button>
           </Link>
         </div>
       </section>
