@@ -49,7 +49,7 @@ const Home = () => {
   // place bet
   const placeBet = async () => {
     load()
-    const blockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 250
+    const blockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 200
 
     const data = {
       block: blockType === BlockType.Auto ? String(blockHeight) : blockInput,
@@ -76,7 +76,7 @@ const Home = () => {
   const [canUseBlockHeight, setCanUseBlockHeight] = useState(0)
   useEffect(() => {
     const timer = setInterval(async () => {
-      const blockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 250
+      const blockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 200
       setCanUseBlockHeight(blockHeight)
     }, 1000)
 
@@ -150,7 +150,7 @@ const Home = () => {
           </div>
 
           <div className="px-4">
-            <div className="mb-4 flex items-center gap-4">
+            <div className="mb-8 flex items-center gap-4">
               <Radio value={BlockType.Custom} checked={blockType === BlockType.Custom} onChange={(event: ChangeEvent<any>) => setBlockType(event.target.value)} />
               { blockType === BlockType.Custom ?
                 <div>
@@ -158,12 +158,15 @@ const Home = () => {
                   { !canBetBlock && <div className="mt-1 text-sm text-[#B3261E]">Error: Cannot bet on existing block!</div> }
                 </div>
                 :
-                <span className="text-xl">Enter Block Number</span>
+                <span className="text-2xl">Enter Block Number</span>
               }
             </div>
             <div className="flex items-center gap-4">
               <Radio value={BlockType.Auto} checked={blockType === BlockType.Auto} onChange={(event: ChangeEvent<any>) => setBlockType(event.target.value)} />
-              <span className="text-xl">Auto Assign Block</span>
+              <div className="">
+                <div className="text-2xl">Auto Assign Block</div>
+                <div className="text-primary">System will assign current block +200 when bet placed</div>
+              </div>
             </div>
           </div>
 
@@ -172,12 +175,12 @@ const Home = () => {
             <div className="mx-4 px-1 py-3 flex items-center justify-between gap-2 text-xl border-b border-bg-dark">
               <div className="flex gap-4">
                 <span>Bets: </span>
-                <span className="text-secondary">1</span>
+                <span className="text-secondary font-bold">1</span>
               </div>
 
               <div className="flex gap-4">
                 <span>Price: </span>
-                <span className="text-secondary">8.5</span>
+                <span className="text-secondary font-bold">8.5</span>
                 <span>Game Points</span>
               </div>
 
@@ -190,7 +193,7 @@ const Home = () => {
 
             <div className="mx-auto py-4 w-fit flex gap-4 text-3xl font-bold">
               <span>Net</span>
-              <span className="text-secondary">10</span>
+              <span className="text-secondary font-bold">10</span>
               <span>Game Points</span>
             </div>
 

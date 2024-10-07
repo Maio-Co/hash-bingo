@@ -1,7 +1,7 @@
 import TitleContainer from '@/context/title-context'
 import { APIRequest } from '@/service/api-request'
 import { ChangeEvent, useEffect, useState } from 'react'
-import UserIcon from '@/assets/icons/user.svg?react'
+import MenuIcon from '@/assets/icons/menu.svg?react'
 import DrawerContainer from '@/context/drawer-context'
 import { useNavigate } from 'react-router'
 import { timeFormat } from '@/utils'
@@ -17,7 +17,7 @@ const BingoHistory = () => {
     setTitle(
       <>
         <div className="absolute t-2 left-4">
-          <UserIcon onClick={() => openDrawer()} />
+          <MenuIcon onClick={() => openDrawer()} />
         </div>
         <div className="mx-auto text-2xl font-bold">My Bingo Card</div>
       </>
@@ -60,7 +60,7 @@ const BingoHistory = () => {
   }, [searchParams])
 
   return (
-    <div className="p-4 flex flex-col">
+    <div className="p-4 pb-0 flex flex-col">
 
       <select value={searchParams.filter} onChange={onChangeFilter} className="mb-4 w-full px-4 py-2 border-2 border-[#CCC0B2] rounded-lg bg-white">
         <option value={''}>All</option>
@@ -76,11 +76,11 @@ const BingoHistory = () => {
         <div className="w-1/3 text-primary font-bold">Status</div>
       </div>
 
-      <section className="mb-4 h-[calc(100dvh-260px)] overflow-auto">
+      <section className="h-[calc(100dvh-240px)] overflow-auto">
         {history.map(item =>
           <article key={item.id} className="px-6 py-2 flex items-center gap-4 border-b border-bg-dark" onClick={() => navigate(`/bingo-card/${item.id}`)}>
             <div className="w-1/3 text-primary font-bold">{item.block}</div>
-            <div className="w-1/3 text-primary font-bold text-sm">{timeFormat(item.createdAt)}</div>
+            <div className="w-1/3 text-primary font-bold text-sm">{timeFormat(item?.createdAt || '')}</div>
             <div className="w-1/3 text-primary font-bold capitalize" >
               { item.status === 'bingo' ? <span className="text-secondary">{item.status}</span> : <span>{item.status}</span> }
             </div>

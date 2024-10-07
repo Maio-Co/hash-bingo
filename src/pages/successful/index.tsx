@@ -2,7 +2,7 @@ import DrawerContainer from '@/context/drawer-context'
 import TitleContainer from '@/context/title-context'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
-import UserIcon from '@/assets/icons/user.svg?react'
+import MenuIcon from '@/assets/icons/menu.svg?react'
 
 const Successful = () => {
   const navigate = useNavigate()
@@ -14,7 +14,7 @@ const Successful = () => {
     setTitle(
       <>
         <div className="absolute t-2 left-4">
-          <UserIcon onClick={() => openDrawer()} />
+          <MenuIcon onClick={() => openDrawer()} />
         </div>
         <div className="mx-auto text-2xl font-bold">Successful</div>
       </>

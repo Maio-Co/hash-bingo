@@ -1,4 +1,4 @@
-import UserIcon from '@/assets/icons/user.svg?react'
+import MenuIcon from '@/assets/icons/menu.svg?react'
 import { useLocation } from 'react-router'
 import TitleContainer from '@/context/title-context'
 
@@ -14,7 +14,7 @@ const Header = ({ openDrawer }: any) => {
       { isIndex ?
         <>
           <div className="absolute t-2 left-4">
-            <UserIcon onClick={openDrawer} />
+            <MenuIcon onClick={openDrawer} />
           </div>
           <div className="mx-auto text-2xl font-bold">Bingo Card</div>
         </>

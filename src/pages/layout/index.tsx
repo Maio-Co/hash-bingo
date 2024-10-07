@@ -13,6 +13,7 @@ import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
 import LoadingContainer from '@/context/loading-context'
 import DrawerContainer from '@/context/drawer-context'
+import { useConnect } from '@particle-network/auth-core-modal'
 
 interface LayoutProps {
   isErrorPage?: boolean
@@ -20,10 +21,12 @@ interface LayoutProps {
 }
 
 const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
-  const { isLoading } = LoadingContainer.useContainer()
+  const { isLoading, load, unload } = LoadingContainer.useContainer()
   const { isLogin } = LoginContainer.useContainer()
   const { isOpenDrawer, openDrawer, closeDrawer } = DrawerContainer.useContainer()
   const { userInfo } = useAuthCore()
+
+  const { disconnect } = useConnect()
 
   const navigate = useNavigate()
 
@@ -32,6 +35,14 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
   const toNavigate = (path: string) => {
     closeDrawer()
     navigate(path)
+  }
+
+  const disconnectWallet = async () => {
+    load()
+    await disconnect()
+    navigate('/')
+    location.reload()
+    unload()
   }
 
   return (
@@ -60,6 +71,7 @@ const Layout = ({ isErrorPage = false, children }: LayoutProps) => {
 
           <div className="px-3 py-4 text-white font-bold text-xl bg-bg-dark rounded-lg cursor-pointer" onClick={() => toNavigate('/game-token')}>Game Token</div>
 
+          <div className="mt-auto mb-6 text-lg text-center text-primary font-bold" onClick={disconnectWallet}>Sign out</div>
         </div>
       </Drawer>
 

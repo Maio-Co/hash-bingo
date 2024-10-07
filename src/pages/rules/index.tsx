@@ -1,5 +1,5 @@
 import TitleContainer from '@/context/title-context'
-import UserIcon from '@/assets/icons/user.svg?react'
+import MenuIcon from '@/assets/icons/menu.svg?react'
 import CloseIcon from '@/assets/icons/close.svg?react'
 import { useEffect } from 'react'
 import DrawerContainer from '@/context/drawer-context'
@@ -17,7 +17,7 @@ const Rules = () => {
     setTitle(
       <>
         <div className="absolute t-2 left-4">
-          <UserIcon onClick={openDrawer} />
+          <MenuIcon onClick={openDrawer} />
         </div>
         <div className="mx-auto text-2xl font-bold">Bingo Card</div>
       </>

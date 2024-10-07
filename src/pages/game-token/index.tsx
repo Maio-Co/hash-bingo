@@ -45,14 +45,14 @@ const GameToken = () => {
         <div className="font-bold text-4xl">{ formatAmount(Number(balances.balance), decimals) } Game Points</div>
       </div>
 
-      <div className="mb-7 flex items-center gap-6">
+      <div className="mb-2 flex items-center gap-6">
         <div onClick={() => navigate('/withdraw')} className="py-3 w-1/2 bg-secondary font-semibold text-white text-center rounded-3xl">Withdraw</div>
         <div onClick={() => navigate('/deposit')} className="py-3 w-1/2 bg-primary-dark font-semibold text-white text-center rounded-3xl">Deposit</div>
       </div>
 
-      <div className="py-2 font-bold text-2xl text-primary border-b border-[#CCC0B2]">Transactions</div>
+      <div className="mb-4 py-2 font-bold text-2xl text-primary border-b border-[#CCC0B2]">Transactions</div>
 
-      <section className="py-4">
+      <section className="h-[calc(100dvh-360px)] overflow-auto">
         { transactions.map(item =>
           <div key={item.id} className="p-2 rounded-md flex items-center text-primary odd:bg-[#8B736133]">
             <span>

@@ -2,7 +2,7 @@ import DrawerContainer from '@/context/drawer-context'
 import TitleContainer from '@/context/title-context'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import UserIcon from '@/assets/icons/user.svg?react'
+import MenuIcon from '@/assets/icons/menu.svg?react'
 import { APIRequest } from '@/service/api-request'
 import { timeFormat } from '@/utils'
 import LoadingContainer from '@/context/loading-context'
@@ -21,7 +21,7 @@ const BingoCard = () => {
     setTitle(
       <>
         <div className="absolute t-2 left-4">
-          <UserIcon onClick={() => openDrawer()} />
+          <MenuIcon onClick={() => openDrawer()} />
         </div>
         <div className="mx-auto text-2xl font-bold">My Bingo Card</div>
       </>
@@ -51,20 +51,32 @@ const BingoCard = () => {
 
   // collect
   const collectBingoCard = async (id: string) => {
+    if (detail.collectedAt !== 0) return
+
     load()
     const data = { id: id }
-    await APIRequest.post('/collect', data)
-      .then(res => res.data)
-      .catch(() => { toast.error('Collect failed') })
+    const isError = await APIRequest.post('/collect', data)
+      .then(() => {
+        toast.success('Collect success')
+        return false
+      })
+      .catch(() => {
+        toast.error('Collect failed')
+        return true
+      })
 
-    getBalance()
+    if (!isError) {
+      getBalance()
+      getBingoCardDetail(id)
+    }
+
 
     unload()
   }
 
   return (
     <div className="p-6">
-      <div onClick={() => navigate(-1)} className="mb-4 w-fit flex items-center gap-4 text-2xl text-secondary font-bold">
+      <div onClick={() => navigate('/history')} className="mb-4 w-fit flex items-center gap-4 text-2xl text-secondary font-bold">
         <span>{'<'}</span>
         <span>Back</span>
       </div>
@@ -106,11 +118,11 @@ const BingoCard = () => {
 
       <div>
         <span className="font-bold">Bet Time：</span>
-        <span>{timeFormat(detail?.createdAt || '-')}</span>
+        <span>{timeFormat(detail?.createdAt || '')}</span>
       </div>
 
       { (detail?.status === 'pending' || !detail.status) && <div onClick={() => getBingoCardDetail(id)} className="mt-8 py-3 w-full text-center rounded-3xl text-xl font-bold text-white bg-bg-dark">Refresh</div>}
-      { detail?.status === 'bingo' && <div onClick={() => collectBingoCard(id)} className="mt-8 py-3 w-full text-center rounded-3xl text-xl font-bold text-white bg-secondary">Collect</div>}
+      { detail?.status === 'bingo' && <div onClick={() => collectBingoCard(id)} className={`mt-8 py-3 w-full text-center rounded-3xl text-xl font-bold ${ detail.collectedAt !== 0 ? 'text-white bg-[#DADADA]' : 'text-white bg-secondary' }`}>Collect</div>}
       { (detail?.status === 'beat' || detail?.status === 'missed') && <div onClick={() => navigate('/')} className="mt-8 py-3 w-full text-center rounded-3xl text-xl font-bold text-white bg-secondary">Again</div>}
     </div>
   )
