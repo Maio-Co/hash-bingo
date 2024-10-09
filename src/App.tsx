@@ -24,10 +24,6 @@ const App = () => {
       appId: '3e4b05ec-6311-437c-b93c-20122efc3af5',
       authTypes: [AuthType.google],
       customStyle: { logo: NotFound },
-      erc4337: {
-        name: 'SIMPLE',
-        version: '1.0.0',
-      },
       wallet: {
         visible: true,
         themeType: 'light',
