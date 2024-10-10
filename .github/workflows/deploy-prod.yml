@@ -1,0 +1,84 @@
+name: FE production Deployment
+run-name: FE production Deployment by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  id-token: write
+
+
+env:
+  ASSUME_ROLE: arn:aws:iam::304661646682:role/Github-action-for-BingoGame-fe
+  AWS_REGION: ap-northeast-1
+  AWS_S3_BUCKET: ui.maio.bingogame.prod
+  AWS_DISTRIBUTION_ID: E3QIXIS4UFB785
+
+jobs:
+  Set_env:
+    runs-on: ubuntu-latest
+    outputs:
+        REF_NAME: ${{ steps.extract-ref-name.outputs.REF_NAME }}
+    steps:
+        - name: Extract reference name
+          id: extract-ref-name
+          run: |
+            if [[ $GITHUB_REF == refs/tags/* ]]; then
+              echo "REF_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+            else
+              echo "REF_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+            fi
+          env:
+            GITHUB_REF: ${{ github.ref }}
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Detect package manager
+        id: detect-package-manager
+        run: |
+          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            echo "runner=yarn" >> $GITHUB_OUTPUT
+            exit 0
+          elif [ -f "${{ github.workspace }}/package.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "Unable to determine package manager"
+            exit 1
+          fi
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+
+      - name: Install dependencies
+        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ASSUME_ROLE}}
+          role-session-name: ${{ (needs.Set_env.outputs.REF_NAME == 'main' || startsWith(needs.Set_env.outputs.REF_NAME, 'v.')) && 'production' || 'staging' }}
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: Security Token Service (STS) get caller identity
+        run: aws sts get-caller-identity
+
+      - name: Yarn build
+        run: |
+          yarn
+          yarn build:${{ (needs.Set_env.outputs.REF_NAME == 'main' || startsWith(needs.Set_env.outputs.REF_NAME, 'v.')) && 'production' || 'staging' }}
+
+      - name: Upload to S3 bucket
+        run: aws s3 sync ./dist s3://${{ env.AWS_S3_BUCKET }} --delete
+
+      - name: Create invalidation for CloudFront distribution
+        run: aws cloudfront create-invalidation --distribution-id ${{ env.AWS_DISTRIBUTION_ID }} --paths "/*"  
