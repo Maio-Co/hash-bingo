@@ -66,7 +66,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.ASSUME_ROLE}}
-          role-session-name: ${{ (needs.Set_env.outputs.REF_NAME == 'main' || startsWith(needs.Set_env.outputs.REF_NAME, 'v.')) && 'production' || 'staging' }}
+          role-session-name:  'production'
           aws-region: ${{ env.AWS_REGION }}
           
       - name: Security Token Service (STS) get caller identity
@@ -75,7 +75,7 @@ jobs:
       - name: Yarn build
         run: |
           yarn
-          yarn build:${{ (needs.Set_env.outputs.REF_NAME == 'main' || startsWith(needs.Set_env.outputs.REF_NAME, 'v.')) && 'production' || 'staging' }}
+          yarn build:production
 
       - name: Upload to S3 bucket
         run: aws s3 sync ./dist s3://${{ env.AWS_S3_BUCKET }} --delete
