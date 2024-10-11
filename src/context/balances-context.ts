@@ -40,7 +40,7 @@ const useBalances = () => {
   }, [loginInfo.jwt])
 
   // token
-  const decimals = 9
+  const decimals = 6
   // const [decimals, setDecimals] = useState(0)
   // useEffect(() => {
   //   getDecimals()
