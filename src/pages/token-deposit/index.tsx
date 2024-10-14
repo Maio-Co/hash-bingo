@@ -5,7 +5,7 @@ import LeftIcon from '@/assets/icons/arrow-left.svg?react'
 import LoginContainer from '@/context/login-context'
 import { PublicKey, Transaction} from '@solana/web3.js'
 import { Program, AnchorProvider } from '@coral-xyz/anchor'
-import idl from '@/global/bingo_game.json'
+// import idl from '@/global/bingo_game.json'
 import bs58 from 'bs58'
 import { APIRequest } from '@/service/api-request'
 import { useSolana } from '@particle-network/auth-core-modal'
@@ -45,6 +45,18 @@ const Deposit = () => {
     if (number === -1 && amount === '0') return
     setAmount(prev => String(Number(prev || 0) + number))
   }
+
+  // get IDL
+  const [idl, setIdl] =useState<any>()
+  useEffect(() => {
+    getProgramId()
+    async function getProgramId () {
+      APIRequest.get('/programid').then((res: any) => {
+        console.log(res.data.idl)
+        setIdl(res.data.idl)
+      })
+    }
+  }, [])
 
   // deposit
   const depositToken = async (address: string, amount: string) => {
