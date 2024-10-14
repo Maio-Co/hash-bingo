@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { isDevelopmentMode } from '@/utils'
 
-const BASE_URL = isDevelopmentMode() ? 'https://api.bingo.api.maio.co' : 'https://staging-api.bingo.api.maio.co'
+const BASE_URL = isDevelopmentMode() ? 'https://staging-api.bingo.api.maio.co' : 'https://api.bingo.api.maio.co'
 
 export const APIRequest = axios.create({ baseURL: BASE_URL, withCredentials: true })
 
