@@ -5,7 +5,6 @@ import LeftIcon from '@/assets/icons/arrow-left.svg?react'
 import LoginContainer from '@/context/login-context'
 import { PublicKey, Transaction} from '@solana/web3.js'
 import { Program, AnchorProvider } from '@coral-xyz/anchor'
-// import idl from '@/global/bingo_game.json'
 import bs58 from 'bs58'
 import { APIRequest } from '@/service/api-request'
 import { useSolana } from '@particle-network/auth-core-modal'
@@ -66,6 +65,8 @@ const Deposit = () => {
 
     const number = parseAmount(Number(amount), decimals)
 
+    console.log('number', number)
+
     // program
     const provider = new AnchorProvider(connection as any, wallet, { preflightCommitment: 'processed' })
     const program = new Program(idl as any, provider)
@@ -79,7 +80,10 @@ const Deposit = () => {
       officialPayer: new PublicKey(loginInfo.officialPayer),
     }
 
+    console.log('transfer_in_accounts', transfer_in_accounts)
+
     const transferAmount = new BN(number)
+    console.log('transferAmount', transferAmount)
 
     const transfer_in_instruction = await program.methods
       .transferIn(transferAmount)
@@ -90,6 +94,8 @@ const Deposit = () => {
     transfer_in_transaction.add(transfer_in_instruction)
     transfer_in_transaction.feePayer = new PublicKey(loginInfo.officialPayer)
     const recentBlockhash = (await connection.getLatestBlockhash()).blockhash
+
+    console.log('recentBlockhash', recentBlockhash)
     transfer_in_transaction.recentBlockhash = recentBlockhash
 
     const signedTransaction = await signTransaction(transfer_in_transaction)
