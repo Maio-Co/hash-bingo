@@ -31,8 +31,8 @@ const App = () => {
           supportChains: [solana, solanaDevnet],
           supportAddToken: true,
           // displayTokenAddresses: ['GBCnrvGweNUyijuRbBKt64JBFF2oZ6twYysjhWePRMND'],
-          displayTokenAddresses: ['Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'],
-          priorityTokenAddresses: ['Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'],
+          // displayTokenAddresses: ['Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'],
+          // priorityTokenAddresses: ['Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'],
           light: {
             colorAccent: '#E5935A',
             colorPrimary: '#F0EEE8',

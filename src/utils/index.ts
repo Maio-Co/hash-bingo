@@ -24,7 +24,7 @@ export function isDevelopmentMode() {
   return process.env.NODE_ENV === 'development'
 }
 
-export function timeFormat(time: any = '', format = 'YYYY/MM/DD HH:mm:ss') {
+export function timeFormat(time: any = '', format = 'YYYY-MM-DD HH:mm:ss') {
   if (time === '') return ''
   return dayjs(time).format(format)
 }

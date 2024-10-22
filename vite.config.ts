@@ -17,8 +17,8 @@ export default defineConfig(() => {
       port: 8000,
       proxy: {
         '^/api': {
-          // target: 'https://iwdpir376d.execute-api.ap-northeast-1.amazonaws.com/dev',
-          target: 'https://api.bingo.api.maio.co',
+          target: 'https://staging-api.bingo.api.maio.co',
+          // target: 'https://api.bingo.api.maio.co',
           rewrite: path => path.replace(/^\/api/, ''),
           changeOrigin: true,
           secure: false,

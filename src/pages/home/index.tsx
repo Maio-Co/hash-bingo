@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router'
 import { connection } from '@/global'
 import toast from 'react-hot-toast'
 import BalancesContainer from '@/context/balances-context'
+import { isDevelopmentMode } from '@/utils'
 
 enum Step { Bingo = 'Bingo', Block = 'Block', Placed = 'Placed' }
 enum BlockType { Custom = 'Custom', Auto = 'Auto' }
@@ -75,6 +76,8 @@ const Home = () => {
   // canUseBlockHeight
   const [canUseBlockHeight, setCanUseBlockHeight] = useState(0)
   useEffect(() => {
+    if (isDevelopmentMode()) return
+
     const timer = setInterval(async () => {
       const blockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight + 200
       setCanUseBlockHeight(blockHeight)

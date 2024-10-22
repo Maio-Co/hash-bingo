@@ -1,10 +1,9 @@
-
-
 import { APIRequest } from '@/service/api-request'
 // import { useAuthCore } from '@particle-network/auth-core-modal'
 import { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next'
 import LoginContainer from './login-context'
+import { decimals } from '@/global'
 // import { getMint } from '@solana/spl-token'
 // import { connection } from '@/global'
 // import { PublicKey } from '@solana/web3.js'
@@ -38,17 +37,6 @@ const useBalances = () => {
       loginInfo.jwt && getBalance()
     }, 100)
   }, [loginInfo.jwt])
-
-  // token
-  const decimals = 6
-  // const [decimals, setDecimals] = useState(0)
-  // useEffect(() => {
-  //   getDecimals()
-  //   async function getDecimals() {
-  //     const mintInfo = await getMint(connection, new PublicKey(loginInfo.splToken))
-  //     setDecimals(mintInfo.decimals)
-  //   }
-  // }, [loginInfo.splToken])
 
 
   // convert amount

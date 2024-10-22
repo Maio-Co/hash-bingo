@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { isDevelopmentMode } from '@/utils'
 
-const BASE_URL = isDevelopmentMode() ? 'https://staging-api.bingo.api.maio.co' : 'https://api.bingo.api.maio.co'
+const BASE_URL = isDevelopmentMode() ? '/api' : 'https://api.bingo.api.maio.co'
 
 export const APIRequest = axios.create({ baseURL: BASE_URL, withCredentials: true })
 
@@ -16,23 +16,3 @@ export const fetcherData = (url: string) => {
 export const fetcher = (url: string) => {
   return APIRequest.get(url).then(res => res.data)
 }
-
-
-// export const GetLoginCallback = (params: User.GetLoginCallback.Req): ApiService<User.GetLoginCallback.Res> => {
-
-//   return APIRequest.get('/v0/login', { params })
-//     .then(res => ({ isError: false, value: toCamel(res.data) }))
-//     .catch(err => {
-//     // apiErrorMessage(err)
-//       return { isError: true, value: err.response?.data.error }
-//     })
-// }
-
-// export const SendUserOperation = (data: UserOperation): ApiService<User.SendUserOperation.Res> => {
-//   return APIRequest.post('/v0/userOp', data)
-//     .then(res => ({ isError: false, value: toCamel(res.data) }))
-//     .catch(err => {
-//       // apiErrorMessage(err)
-//       return { isError: true, value: err.response?.data.error }
-//     })
-// }

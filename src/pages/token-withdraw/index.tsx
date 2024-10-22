@@ -10,6 +10,8 @@ import { APIRequest } from '@/service/api-request'
 import LoadingContainer from '@/context/loading-context'
 import { Dialog, DialogTitle, DialogContent } from '@mui/material'
 import toast from 'react-hot-toast'
+import { connection } from '@/global'
+import { sleep } from '@/utils'
 
 const Withdraw = () => {
   const navigate = useNavigate()
@@ -47,10 +49,26 @@ const Withdraw = () => {
 
     unload()
 
-    if (res.tx) {
-      navigate('/successful')
-      getBalance()
-      onClose()
+    if (res.txid) await checkTransactionStatus()
+
+    async function checkTransactionStatus() {
+      const transactionStatus = await connection.getTransaction(res.txid, {
+        commitment: 'confirmed',
+        maxSupportedTransactionVersion: 0
+      })
+      console.log('transactionStatus', transactionStatus)
+      if (!transactionStatus) {
+        await sleep(1)
+        await checkTransactionStatus()
+      }
+      else {
+        unload()
+
+        navigate('/successful')
+        getBalance()
+        onClose()
+      }
+
     }
   }
 

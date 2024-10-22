@@ -14,6 +14,8 @@ import { connection } from '@/global'
 import toast from 'react-hot-toast'
 import BalancesContainer from '@/context/balances-context'
 import { BN } from 'bn.js'
+import { sleep } from '@/utils'
+
 
 const Deposit = () => {
   const { load, unload } = LoadingContainer.useContainer()
@@ -51,7 +53,6 @@ const Deposit = () => {
     getProgramId()
     async function getProgramId () {
       APIRequest.get('/programid').then((res: any) => {
-        console.log(res.data.idl)
         setIdl(res.data.idl)
       })
     }
@@ -64,8 +65,6 @@ const Deposit = () => {
     load()
 
     const number = parseAmount(Number(amount), decimals)
-
-    console.log('number', number)
 
     // program
     const provider = new AnchorProvider(connection as any, wallet, { preflightCommitment: 'processed' })
@@ -80,10 +79,7 @@ const Deposit = () => {
       officialPayer: new PublicKey(loginInfo.officialPayer),
     }
 
-    console.log('transfer_in_accounts', transfer_in_accounts)
-
     const transferAmount = new BN(number)
-    console.log('transferAmount', transferAmount)
 
     const transfer_in_instruction = await program.methods
       .transferIn(transferAmount)
@@ -95,7 +91,6 @@ const Deposit = () => {
     transfer_in_transaction.feePayer = new PublicKey(loginInfo.officialPayer)
     const recentBlockhash = (await connection.getLatestBlockhash()).blockhash
 
-    console.log('recentBlockhash', recentBlockhash)
     transfer_in_transaction.recentBlockhash = recentBlockhash
 
     const signedTransaction = await signTransaction(transfer_in_transaction)
@@ -105,12 +100,26 @@ const Deposit = () => {
       .then(res => res.data)
       .catch(() => toast.error('Deposit Failed'))
 
-    unload()
+    if (res.txid) await checkTransactionStatus()
 
-    if (res.txid) {
-      navigate('/successful')
-      getBalance()
-      onClose()
+    async function checkTransactionStatus() {
+      const transactionStatus = await connection.getTransaction(res.txid, {
+        commitment: 'confirmed',
+        maxSupportedTransactionVersion: 0
+      })
+      console.log('transactionStatus', transactionStatus)
+      if (!transactionStatus) {
+        await sleep(1)
+        await checkTransactionStatus()
+      }
+      else {
+        unload()
+
+        navigate('/successful')
+        getBalance()
+        onClose()
+      }
+
     }
   }
 
