@@ -103,21 +103,27 @@ const Deposit = () => {
     if (res.txid) await checkTransactionStatus()
 
     async function checkTransactionStatus() {
-      const transactionStatus = await connection.getTransaction(res.txid, {
+      const transactionStatus: any = await connection.getTransaction(res.txid, {
         commitment: 'confirmed',
         maxSupportedTransactionVersion: 0
       })
+
       console.log('transactionStatus', transactionStatus)
-      if (!transactionStatus) {
+
+      if (transactionStatus === null) {
         await sleep(1)
         await checkTransactionStatus()
+        return
       }
-      else {
+
+      if (transactionStatus && transactionStatus?.meta.err === null) {
         unload()
 
         navigate('/successful')
         getBalance()
         onClose()
+      } else {
+        toast.error('Deposit Failed')
       }
 
     }
