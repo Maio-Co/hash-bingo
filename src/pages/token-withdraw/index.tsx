@@ -49,7 +49,7 @@ const Withdraw = () => {
 
     unload()
 
-    if (res.txid) await checkTransactionStatus()
+    if (res?.txid) await checkTransactionStatus()
 
     async function checkTransactionStatus() {
       const transactionStatus: any = await connection.getTransaction(res.txid, {
